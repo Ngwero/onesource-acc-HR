@@ -35,6 +35,15 @@ function getPrismaClient() {
   return client;
 }
 
-export const prisma = getPrismaClient();
+let cachedClient: PrismaClient | undefined;
+
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    if (!cachedClient) {
+      cachedClient = getPrismaClient();
+    }
+    return Reflect.get(cachedClient, prop, receiver);
+  },
+});
 
 export default prisma;

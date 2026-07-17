@@ -6,6 +6,7 @@
     "dev": "prisma generate && next dev -p 3001",
     "dev:clean": "rm -rf .next && prisma generate && next dev -p 3001",
     "build": "prisma generate && next build",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
     "db:migrate": "prisma migrate dev",

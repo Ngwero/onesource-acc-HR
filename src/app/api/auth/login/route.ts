@@ -78,6 +78,9 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Login error:", error);
-    return errorResponse("Login failed", [], 500);
+    const detail =
+      error instanceof Error ? error.message : "Unexpected server error";
+    // Surface DB/config failures so production can be fixed without guessing
+    return errorResponse(`Login failed: ${detail}`, [], 500);
   }
 }

@@ -29,13 +29,16 @@ export default function CustomersPage() {
   const [showBulk, setShowBulk] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [createForm, setCreateForm] = useState<CustomerForm>(empty);
   const [editForm, setEditForm] = useState<CustomerForm>(empty);
 
   const load = useCallback(() => {
+    setFetching(true);
     fetch(`/api/customers?search=${encodeURIComponent(search)}&limit=100`)
       .then((r) => r.json())
-      .then((res) => { if (res.success) setItems(res.data.items || []); });
+      .then((res) => { if (res.success) setItems(res.data.items || []); })
+      .finally(() => setFetching(false));
   }, [search]);
 
   useEffect(() => { load(); }, [load]);
@@ -132,7 +135,7 @@ export default function CustomersPage() {
         </FormModal>
       )}
 
-      <DataTable columns={[
+      <DataTable loading={fetching} columns={[
         { key: "code", header: "ID" }, { key: "name", header: "Name" }, { key: "customerType", header: "Type" },
         { key: "country", header: "Country" },
         { key: "creditLimit", header: "Credit Limit", render: (i) => formatCurrency(Number(i.creditLimit)) },

@@ -29,13 +29,16 @@ export default function SuppliersPage() {
   const [showBulk, setShowBulk] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [createForm, setCreateForm] = useState<SupplierForm>(empty);
   const [editForm, setEditForm] = useState<SupplierForm>(empty);
 
   const load = useCallback(() => {
+    setFetching(true);
     fetch(`/api/suppliers?search=${encodeURIComponent(search)}&limit=100`)
       .then((r) => r.json())
-      .then((res) => { if (res.success) setItems(res.data.items || []); });
+      .then((res) => { if (res.success) setItems(res.data.items || []); })
+      .finally(() => setFetching(false));
   }, [search]);
 
   useEffect(() => { load(); }, [load]);
@@ -127,7 +130,7 @@ export default function SuppliersPage() {
         </FormModal>
       )}
 
-      <DataTable columns={[
+      <DataTable loading={fetching} columns={[
         { key: "code", header: "ID" }, { key: "name", header: "Name" }, { key: "supplierType", header: "Type" },
         { key: "location", header: "Location" }, { key: "phone", header: "Phone" },
         { key: "balance", header: "Balance", render: (i) => formatCurrency(Number(i.balance)) },

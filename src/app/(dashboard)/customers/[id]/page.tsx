@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge, formatCurrency } from "@/components/ui/data-table";
+import { PageLoader } from "@/components/ui/page-loader";
 import { formatDate } from "@/lib/utils";
 
 export default function CustomerDetailPage() {
@@ -32,7 +33,7 @@ export default function CustomerDetailPage() {
     });
   }, [id]);
 
-  if (!customer) return <p className="p-6 text-gray-500">Loading customer...</p>;
+  if (!customer) return <PageLoader label="Loading customer…" />;
 
   return (
     <div>

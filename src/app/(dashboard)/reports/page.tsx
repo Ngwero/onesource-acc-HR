@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import { exportToExcel, exportToCSV } from "@/lib/export";
 import { ReportTable, ReportObjectView } from "@/components/ui/report-table";
+import { PageLoader } from "@/components/ui/page-loader";
 
 const REPORTS = [
   { id: "profit-loss", name: "Profit & Loss (GL)", isObject: true },
@@ -26,11 +27,14 @@ const REPORTS = [
 
 export default function ReportsPage() {
   const [pl, setPl] = useState<Record<string, number> | null>(null);
+  const [plLoading, setPlLoading] = useState(true);
   const [activeReport, setActiveReport] = useState<string | null>(null);
+  const [reportLoading, setReportLoading] = useState(false);
   const [reportData, setReportData] = useState<Record<string, unknown>[]>([]);
   const [reportObject, setReportObject] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
+    setPlLoading(true);
     fetch("/api/reports?report=profit-loss&filter=year")
       .then((r) => r.json())
       .then((res) => {
@@ -44,21 +48,29 @@ export default function ReportsPage() {
             netProfit: d.netProfit,
           });
         }
-      });
+      })
+      .finally(() => setPlLoading(false));
   }, []);
 
   const loadReport = async (reportId: string) => {
     setActiveReport(reportId);
+    setReportLoading(true);
+    setReportData([]);
+    setReportObject(null);
     const meta = REPORTS.find((r) => r.id === reportId);
-    const res = await fetch(`/api/reports?report=${reportId}&filter=year`).then((r) => r.json());
-    if (res.success) {
-      if (meta?.isObject && !Array.isArray(res.data)) {
-        setReportObject(res.data as Record<string, unknown>);
-        setReportData([]);
-      } else {
-        setReportObject(null);
-        setReportData(Array.isArray(res.data) ? res.data : [res.data]);
+    try {
+      const res = await fetch(`/api/reports?report=${reportId}&filter=year`).then((r) => r.json());
+      if (res.success) {
+        if (meta?.isObject && !Array.isArray(res.data)) {
+          setReportObject(res.data as Record<string, unknown>);
+          setReportData([]);
+        } else {
+          setReportObject(null);
+          setReportData(Array.isArray(res.data) ? res.data : [res.data]);
+        }
       }
+    } finally {
+      setReportLoading(false);
     }
   };
 
@@ -81,7 +93,13 @@ export default function ReportsPage() {
     <div>
       <PageHeader title="Reports" description="Financial and operational reports with PDF, Excel, and CSV export" />
 
-      {pl && (
+      {plLoading ? (
+        <Card className="mb-6">
+          <CardContent className="p-2">
+            <PageLoader compact label="Loading P&L summary…" />
+          </CardContent>
+        </Card>
+      ) : pl ? (
         <Card className="mb-6">
           <CardHeader><CardTitle>Profit & Loss (GL — This Year)</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
@@ -92,7 +110,7 @@ export default function ReportsPage() {
             <div className="flex justify-between border-t pt-2 font-bold"><span>Net Profit</span><span className="text-green-700">{formatCurrency(pl.netProfit || 0)}</span></div>
           </CardContent>
         </Card>
-      )}
+      ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {REPORTS.map((r) => (
@@ -109,7 +127,15 @@ export default function ReportsPage() {
         ))}
       </div>
 
-      {activeReport && (reportData.length > 0 || reportObject) && (
+      {activeReport && reportLoading && (
+        <Card className="mt-6">
+          <CardContent className="p-2">
+            <PageLoader compact label="Loading report…" />
+          </CardContent>
+        </Card>
+      )}
+
+      {activeReport && !reportLoading && (reportData.length > 0 || reportObject) && (
         <Card className="mt-6">
           <CardHeader><CardTitle>{REPORTS.find((r) => r.id === activeReport)?.name}</CardTitle></CardHeader>
           <CardContent>

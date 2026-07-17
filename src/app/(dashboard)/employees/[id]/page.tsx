@@ -7,6 +7,7 @@ import { FormModal, FormField, FormActions } from "@/components/ui/form-modal";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { PageLoader } from "@/components/ui/page-loader";
 
 type Employee = Record<string, unknown> & {
   id: string;
@@ -121,7 +122,7 @@ export default function EmployeeDetailPage() {
   };
 
   if (!emp) {
-    return <p className="text-slate-500">Loading employee…</p>;
+    return <PageLoader label="Loading employee…" />;
   }
 
   return (

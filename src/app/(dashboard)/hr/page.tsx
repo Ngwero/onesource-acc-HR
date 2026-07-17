@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { HrTourTrigger } from "@/components/hr/hr-quick-tour";
+import { PageLoader } from "@/components/ui/page-loader";
 
 type Summary = {
   activeEmployees: number;
@@ -35,9 +36,11 @@ type Summary = {
 
 export default function HrOverviewPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
     fetch("/api/hr")
       .then(async (r) => {
         const text = await r.text();
@@ -47,11 +50,18 @@ export default function HrOverviewPage() {
       .then((res) => {
         if (!cancelled && res.success && res.data) setSummary(res.data);
       })
-      .catch((err) => console.error("HR summary fetch failed:", err));
+      .catch((err) => console.error("HR summary fetch failed:", err))
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  if (loading && !summary) {
+    return <PageLoader label="Loading HR overview…" />;
+  }
 
   const cards = [
     {

@@ -2,6 +2,7 @@
 
 import { HrNav } from "@/components/layout/hr-nav";
 import { HrTourRoot } from "@/components/hr/hr-quick-tour";
+import { RouteProgress } from "@/components/layout/route-progress";
 import type { UserRole } from "@/generated/prisma/client";
 
 export function HrWorkspace({
@@ -17,6 +18,7 @@ export function HrWorkspace({
 }) {
   return (
     <>
+      <RouteProgress />
       <HrNav
         userName={userName}
         userRole={userRole}

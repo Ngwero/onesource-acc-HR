@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataTable, StatusBadge, formatCurrency } from "@/components/ui/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageLoader } from "@/components/ui/page-loader";
 import { formatDate } from "@/lib/utils";
 
 interface XeroModulePageProps {
@@ -32,7 +33,7 @@ export function XeroModulePage({ title, description, module, columns }: XeroModu
     <div>
       <PageHeader title={title} description={description} />
       {loading ? (
-        <p className="text-gray-500">Loading...</p>
+        <PageLoader compact label="Loading…" />
       ) : (
         <DataTable columns={columns} data={items} />
       )}

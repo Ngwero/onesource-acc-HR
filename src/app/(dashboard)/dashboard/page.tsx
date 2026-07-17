@@ -31,6 +31,7 @@ import { formatCurrency } from "@/lib/utils";
 import { BRAND } from "@/lib/branding";
 import { AccountingTourTrigger } from "@/components/accounting/accounting-quick-tour";
 import { firstNameOf, useAppUserOptional } from "@/components/layout/user-context";
+import { PageLoader } from "@/components/ui/page-loader";
 
 const EXPENSE_COLORS = [
   BRAND.lime,
@@ -104,16 +105,18 @@ function ChartTooltip({ active, payload, label }: {
 
 function Skeleton() {
   return (
-    <div className="dash-page space-y-6 animate-pulse">
-      <div className="h-10 w-64 rounded-xl bg-[#d5e8c8]/60" />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-32 rounded-2xl bg-white/80" />
-        ))}
-      </div>
-      <div className="grid gap-5 xl:grid-cols-2">
-        <div className="h-80 rounded-2xl bg-white/80" />
-        <div className="h-80 rounded-2xl bg-white/80" />
+    <div className="dash-page space-y-6">
+      <PageLoader label="Loading dashboard…" />
+      <div className="animate-pulse space-y-5 opacity-60">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-28 rounded-2xl bg-white/80" />
+          ))}
+        </div>
+        <div className="grid gap-5 xl:grid-cols-2">
+          <div className="h-64 rounded-2xl bg-white/80" />
+          <div className="h-64 rounded-2xl bg-white/80" />
+        </div>
       </div>
     </div>
   );

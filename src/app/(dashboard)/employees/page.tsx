@@ -7,6 +7,7 @@ import { FormModal, FormField, FormActions } from "@/components/ui/form-modal";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
+import { PageLoader } from "@/components/ui/page-loader";
 
 type Dept = { id: string; name: string; code: string; _count?: { employees: number } };
 type Emp = {
@@ -43,6 +44,7 @@ export default function EmployeesPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [showDept, setShowDept] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [form, setForm] = useState(emptyForm);
   const [deptForm, setDeptForm] = useState({ code: "", name: "", description: "" });
   const [notice, setNotice] = useState("");
@@ -51,13 +53,16 @@ export default function EmployeesPage() {
     const qs = new URLSearchParams();
     if (search) qs.set("search", search);
     if (status) qs.set("status", status);
+    setFetching(true);
     Promise.all([
       fetch(`/api/employees?${qs}`).then((r) => r.json()),
       fetch("/api/departments").then((r) => r.json()),
-    ]).then(([e, d]) => {
-      if (e.success) setEmployees(e.data);
-      if (d.success) setDepartments(d.data);
-    });
+    ])
+      .then(([e, d]) => {
+        if (e.success) setEmployees(e.data);
+        if (d.success) setDepartments(d.data);
+      })
+      .finally(() => setFetching(false));
   }, [search, status]);
 
   useEffect(() => {
@@ -183,7 +188,13 @@ export default function EmployeesPage() {
               </tr>
             </thead>
             <tbody>
-              {employees.length === 0 ? (
+              {fetching ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-6">
+                    <PageLoader compact label="Loading employees…" />
+                  </td>
+                </tr>
+              ) : employees.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-5 py-10 text-center text-slate-400">
                     No employees found

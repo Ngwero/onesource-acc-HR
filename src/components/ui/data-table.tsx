@@ -2,6 +2,7 @@
 
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import { Badge } from "./badge";
+import { PageLoader } from "./page-loader";
 
 interface Column<T> {
   key: string;
@@ -16,6 +17,8 @@ interface DataTableProps<T> {
   keyField?: string;
   emptyMessage?: string;
   onRowClick?: (item: T) => void;
+  loading?: boolean;
+  loadingLabel?: string;
 }
 
 export function DataTable<T extends Record<string, unknown>>({
@@ -24,6 +27,8 @@ export function DataTable<T extends Record<string, unknown>>({
   keyField = "id",
   emptyMessage = "No records found",
   onRowClick,
+  loading = false,
+  loadingLabel = "Loading data…",
 }: DataTableProps<T>) {
   const getRowKey = (item: T, index: number) => {
     const primary = item[keyField];
@@ -38,6 +43,14 @@ export function DataTable<T extends Record<string, unknown>>({
     }
     return `row-${index}`;
   };
+
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-green-100 bg-white">
+        <PageLoader compact label={loadingLabel} />
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-x-auto rounded-lg border border-green-100">

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { DataTable, StatusBadge, formatCurrency } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PageLoader } from "@/components/ui/page-loader";
 
 interface ModuleListPageProps {
   title: string;
@@ -65,7 +66,7 @@ export function ModuleListPage({
         </Button>
       </div>
       {loading ? (
-        <p className="text-gray-500">Loading...</p>
+        <PageLoader compact label="Loading…" />
       ) : (
         <DataTable columns={columns} data={items} />
       )}

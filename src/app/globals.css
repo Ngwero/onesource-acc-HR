@@ -377,6 +377,97 @@ body {
   color: #fff;
 }
 
+/* ——— Page loader ——— */
+.page-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  color: var(--brand-muted);
+}
+
+.page-loader-full {
+  min-height: min(52vh, 28rem);
+  padding: 2.5rem 1rem;
+}
+
+.page-loader-compact {
+  min-height: 12rem;
+  padding: 2rem 1rem;
+}
+
+.page-loader-spinner {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: 3px solid rgba(120, 176, 40, 0.22);
+  border-top-color: var(--brand-forest);
+  animation: page-loader-spin 0.75s linear infinite;
+}
+
+.page-loader-label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--brand-muted);
+}
+
+@keyframes page-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader-spinner {
+    animation: none;
+    border-top-color: var(--brand-lime);
+  }
+}
+
+.route-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 80;
+  height: 3px;
+  pointer-events: none;
+  background: transparent;
+}
+
+.route-progress-bar {
+  height: 100%;
+  width: 40%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--brand-lime), var(--brand-forest));
+  animation: route-progress-slide 0.9s ease-in-out infinite;
+}
+
+@keyframes route-progress-slide {
+  0% {
+    transform: translateX(-120%);
+    width: 30%;
+  }
+  50% {
+    width: 55%;
+  }
+  100% {
+    transform: translateX(320%);
+    width: 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-progress-bar {
+    animation: none;
+    width: 100%;
+    opacity: 0.7;
+  }
+}
+
 /* ——— Dashboard ——— */
 .dash-page {
   color: var(--brand-ink);

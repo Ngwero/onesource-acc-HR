@@ -3,13 +3,42 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+function migrationDatabaseUrl() {
+  const url = process.env["DIRECT_URL"] || process.env["DATABASE_URL"];
+  if (!url) {
+    throw new Error(
+      "DIRECT_URL (preferred) or DATABASE_URL must be set for Prisma migrations."
+    );
+  }
+
+  // Supabase transaction pooler (6543) cannot run migrate; needs session/direct (5432)
+  // with tenant username postgres.<project-ref>
+  if (/:6543\b/.test(url) || /pgbouncer=true/i.test(url)) {
+    throw new Error(
+      "Prisma migrate cannot use the Supabase transaction pooler (port 6543). " +
+        "Set DIRECT_URL to the session pooler (port 5432) with username postgres.<project-ref>."
+    );
+  }
+
+  if (
+    /pooler\.supabase\.com/i.test(url) &&
+    /:\/\/postgres:/i.test(url) &&
+    !/:\/\/postgres\.[^:]+:/i.test(url)
+  ) {
+    throw new Error(
+      'Supabase pooler requires username "postgres.<project-ref>" (not plain "postgres").'
+    );
+  }
+
+  return url;
+}
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
   },
   datasource: {
-    // Use direct connection for migrations (pooler breaks prisma migrate)
-    url: process.env["DIRECT_URL"] || process.env["DATABASE_URL"],
+    url: migrationDatabaseUrl(),
   },
 });

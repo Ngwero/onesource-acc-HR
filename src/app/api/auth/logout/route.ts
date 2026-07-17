@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { COOKIE_NAME } from "@/lib/jwt";
 import { WORKSPACE_COOKIE } from "@/lib/workspace";
+import { absoluteUrl } from "@/lib/request-origin";
 
 function clearCookie(response: NextResponse, name: string) {
   response.cookies.set(name, "", {
@@ -13,7 +14,7 @@ function clearCookie(response: NextResponse, name: string) {
 }
 
 function logoutRedirect(request: Request) {
-  const response = NextResponse.redirect(new URL("/login", request.url), 303);
+  const response = NextResponse.redirect(absoluteUrl(request, "/login"), 303);
   clearCookie(response, COOKIE_NAME);
   clearCookie(response, WORKSPACE_COOKIE);
   return response;

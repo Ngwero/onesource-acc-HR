@@ -7,6 +7,7 @@ import {
   isWorkspace,
   WORKSPACE_HOME,
 } from "@/lib/workspace";
+import { absoluteUrl } from "@/lib/request-origin";
 
 const publicPaths = [
   "/login",
@@ -34,6 +35,7 @@ function isSharedAppPath(pathname: string) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const to = (path: string) => NextResponse.redirect(absoluteUrl(request, path));
 
   if (
     publicPaths.some((p) => pathname.startsWith(p)) ||
@@ -44,7 +46,7 @@ export async function middleware(request: NextRequest) {
     if (pathname === "/login" || pathname.startsWith("/login/")) {
       const token = request.cookies.get(COOKIE_NAME)?.value;
       if (token && (await verifyToken(token))) {
-        return NextResponse.redirect(new URL("/apps", request.url));
+        return to("/apps");
       }
     }
     return NextResponse.next();
@@ -58,7 +60,7 @@ export async function middleware(request: NextRequest) {
         { status: 401 }
       );
     }
-    return NextResponse.redirect(new URL("/login", request.url));
+    return to("/login");
   }
 
   // API routes: auth only (workspace is a UI concern)
@@ -74,7 +76,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!workspace) {
-    return NextResponse.redirect(new URL("/apps", request.url));
+    return to("/apps");
   }
 
   if (isSharedAppPath(pathname)) {
@@ -84,11 +86,11 @@ export async function middleware(request: NextRequest) {
   const onHr = isHrPath(pathname);
 
   if (workspace === "hr" && !onHr) {
-    return NextResponse.redirect(new URL(WORKSPACE_HOME.hr, request.url));
+    return to(WORKSPACE_HOME.hr);
   }
 
   if (workspace === "accounting" && onHr) {
-    return NextResponse.redirect(new URL(WORKSPACE_HOME.accounting, request.url));
+    return to(WORKSPACE_HOME.accounting);
   }
 
   return NextResponse.next();

@@ -14,7 +14,11 @@ function clearCookie(response: NextResponse, name: string) {
 }
 
 function logoutRedirect(request: Request) {
-  const response = NextResponse.redirect(absoluteUrl(request, "/login"), 303);
+  const { searchParams } = new URL(request.url);
+  const reason = searchParams.get("reason");
+  const path =
+    reason === "idle" ? "/login?reason=idle" : reason === "manual" ? "/login" : "/login";
+  const response = NextResponse.redirect(absoluteUrl(request, path), 303);
   clearCookie(response, COOKIE_NAME);
   clearCookie(response, WORKSPACE_COOKIE);
   return response;

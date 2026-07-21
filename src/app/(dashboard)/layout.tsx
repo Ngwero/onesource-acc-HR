@@ -1,12 +1,13 @@
 import { cookies } from "next/headers";
 import { getAuthUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { AppNav } from "@/components/layout/app-nav";
 import { AccountingWorkspace } from "@/components/layout/accounting-workspace";
 import { HrWorkspace } from "@/components/layout/hr-workspace";
 import { UserProvider } from "@/components/layout/user-context";
+import { IdleSessionGuard } from "@/components/auth/idle-session-guard";
 import { prisma } from "@/lib/prisma";
 import { WORKSPACE_COOKIE, isWorkspace } from "@/lib/workspace";
+import { getSessionIdleMinutes } from "@/lib/session-idle";
 
 export default async function DashboardLayout({
   children,
@@ -20,37 +21,44 @@ export default async function DashboardLayout({
   const raw = cookieStore.get(WORKSPACE_COOKIE)?.value;
   if (!isWorkspace(raw)) redirect("/apps");
 
-  const notificationCount = await prisma.notification.count({
-    where: { userId: user.id, isRead: false },
-  });
+  const [notificationCount, idleMinutes] = await Promise.all([
+    prisma.notification.count({
+      where: { userId: user.id, isRead: false },
+    }),
+    getSessionIdleMinutes(),
+  ]);
 
   if (raw === "hr") {
     return (
       <UserProvider user={user}>
-        <div className="min-h-screen app-shell">
-          <HrWorkspace
-            userName={user.fullName}
-            userRole={user.role}
-            notificationCount={notificationCount}
-          >
-            {children}
-          </HrWorkspace>
-        </div>
+        <IdleSessionGuard idleMinutes={idleMinutes}>
+          <div className="min-h-screen app-shell">
+            <HrWorkspace
+              userName={user.fullName}
+              userRole={user.role}
+              notificationCount={notificationCount}
+            >
+              {children}
+            </HrWorkspace>
+          </div>
+        </IdleSessionGuard>
       </UserProvider>
     );
   }
 
   return (
     <UserProvider user={user}>
-      <div className="min-h-screen app-shell">
-        <AccountingWorkspace
-          userName={user.fullName}
-          userRole={user.role}
-          notificationCount={notificationCount}
-        >
-          {children}
-        </AccountingWorkspace>
-      </div>
+      <IdleSessionGuard idleMinutes={idleMinutes}>
+        <div className="min-h-screen app-shell">
+          <AccountingWorkspace
+            userName={user.fullName}
+            userRole={user.role}
+            notificationCount={notificationCount}
+          >
+            {children}
+          </AccountingWorkspace>
+        </div>
+      </IdleSessionGuard>
     </UserProvider>
   );
 }

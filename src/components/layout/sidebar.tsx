@@ -34,6 +34,7 @@ import {
   Building2,
   Sparkles,
   Upload,
+  PhoneCall,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { canAccessModule, type Module } from "@/lib/permissions";
@@ -72,6 +73,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { href: "/credit-notes", label: "Credit Notes", icon: FileMinus, module: "credit_notes" },
       { href: "/payables", label: "Accounts Payable", icon: CreditCard, module: "payables" },
       { href: "/receivables", label: "Accounts Receivable", icon: Wallet, module: "receivables" },
+      { href: "/collections", label: "Collections", icon: PhoneCall, module: "receivables" },
       { href: "/payments", label: "Payments", icon: CreditCard, module: "payments" },
       { href: "/recurring", label: "Repeating", icon: Repeat, module: "recurring" },
       { href: "/expenses", label: "Expenses", icon: Receipt, module: "expenses" },

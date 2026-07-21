@@ -28,6 +28,7 @@ import {
   CheckSquare,
   Settings,
   ArrowLeftRight,
+  PhoneCall,
   type LucideIcon,
 } from "lucide-react";
 import { BrandLogo } from "@/components/layout/brand-logo";
@@ -61,6 +62,7 @@ const TOOLS_LINKS: NavLink[] = [
   { href: "/export-sales", label: "Export Sales", module: "export_sales", icon: Globe },
   { href: "/expenses", label: "Expenses", module: "expenses", icon: Wallet },
   { href: "/payments", label: "Payments", module: "payments", icon: CreditCard },
+  { href: "/collections", label: "Collections", module: "receivables", icon: PhoneCall },
   { href: "/ledger", label: "General Ledger", module: "ledger", icon: BookOpen },
   { href: "/approvals", label: "Approvals", module: "approvals", icon: CheckSquare },
   { href: "/settings", label: "Settings", module: "settings", icon: Settings },

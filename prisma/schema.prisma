@@ -372,6 +372,7 @@ model User {
   attachments         Attachment[]
   notifications       Notification[]
   paymentsCreated     Payment[]
+  collectionFollowUps CollectionFollowUp[]
 
   employeeProfile     Employee?          @relation("EmployeeUser")
   employeesCreated    Employee[]         @relation("EmployeeCreatedBy")
@@ -589,6 +590,8 @@ model CompanySetting {
   smtpUser              String?
   smtpPass              String?
   smtpFrom              String?
+  /// Minutes of inactivity before automatic logout (client-enforced; min 5, max 240)
+  sessionIdleMinutes    Int          @default(15)
   updatedAt             DateTime     @updatedAt
 }
 
@@ -1041,11 +1044,28 @@ model Receivable {
 
   payments Payment[]
   paymentAllocations PaymentAllocation[]
+  collectionFollowUps CollectionFollowUp[]
 
   @@index([customerId])
   @@index([status])
   @@index([dueDate])
   @@index([entityId])
+}
+
+model CollectionFollowUp {
+  id             String     @id @default(cuid())
+  receivableId   String
+  receivable     Receivable @relation(fields: [receivableId], references: [id], onDelete: Cascade)
+  note           String
+  channel        String     @default("PHONE") // PHONE, EMAIL, VISIT, WHATSAPP, OTHER
+  nextFollowUpAt DateTime?
+  createdById    String
+  createdBy      User       @relation(fields: [createdById], references: [id])
+  createdAt      DateTime   @default(now())
+
+  @@index([receivableId])
+  @@index([nextFollowUpAt])
+  @@index([createdById])
 }
 
 model Payment {

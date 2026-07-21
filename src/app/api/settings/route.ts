@@ -55,6 +55,14 @@ export const PUT = withAuth(
       ...(body.smtpPass && body.smtpPass !== "••••••••"
         ? { smtpPass: body.smtpPass }
         : {}),
+      ...(body.sessionIdleMinutes != null
+        ? {
+            sessionIdleMinutes: Math.min(
+              240,
+              Math.max(5, Number(body.sessionIdleMinutes) || 15)
+            ),
+          }
+        : {}),
     };
 
     const settings = existing

@@ -108,6 +108,18 @@ export default function SettingsPage() {
             <FormField label="Default Payment Terms (days)"><Input type="number" value={Number(settings.defaultPaymentTerms || 30)} onChange={(e) => update("defaultPaymentTerms", +e.target.value)} /></FormField>
             <FormField label="Default Tax Rate (%)"><Input type="number" step="0.01" value={Number(settings.defaultTaxRate || 0)} onChange={(e) => update("defaultTaxRate", +e.target.value)} /></FormField>
             <FormField label="Fiscal Year Start Month"><Input type="number" min={1} max={12} value={Number(settings.fiscalYearStartMonth || 1)} onChange={(e) => update("fiscalYearStartMonth", +e.target.value)} /></FormField>
+            <FormField label="Session idle timeout (minutes)">
+              <Input
+                type="number"
+                min={5}
+                max={240}
+                value={Number(settings.sessionIdleMinutes || 15)}
+                onChange={(e) => update("sessionIdleMinutes", +e.target.value)}
+              />
+              <p className="mt-1 text-xs text-slate-500">
+                Users are signed out after this many minutes without mouse/keyboard activity. Warning appears 60 seconds before.
+              </p>
+            </FormField>
           </CardContent>
         </Card>
 

@@ -234,30 +234,37 @@ export const departmentSchema = z.object({
   managerId: z.string().optional(),
 });
 
+const emptyToUndefined = (value: unknown) =>
+  value === "" || value === null || value === undefined ? undefined : value;
+
 export const employeeSchema = z.object({
-  fullName: z.string().min(2),
-  email: z.string().email().optional().or(z.literal("")),
-  phone: z.string().optional(),
-  jobTitle: z.string().optional(),
-  departmentId: z.string().optional(),
-  userId: z.string().optional(),
-  hireDate: z.string().optional(),
-  dateOfBirth: z.string().optional(),
-  gender: z.string().optional(),
-  address: z.string().optional(),
-  nationalId: z.string().optional(),
-  tin: z.string().optional(),
-  nssfNumber: z.string().optional(),
-  bankName: z.string().optional(),
-  bankAccount: z.string().optional(),
-  emergencyContact: z.string().optional(),
-  emergencyPhone: z.string().optional(),
-  baseSalary: z.number().min(0).optional(),
-  allowances: z.number().min(0).optional(),
+  fullName: z.string().trim().min(2, "Full name is required"),
+  email: z.preprocess(
+    emptyToUndefined,
+    z.string().email("Invalid email").optional()
+  ),
+  phone: z.preprocess(emptyToUndefined, z.string().optional()),
+  jobTitle: z.preprocess(emptyToUndefined, z.string().optional()),
+  departmentId: z.preprocess(emptyToUndefined, z.string().optional()),
+  userId: z.preprocess(emptyToUndefined, z.string().optional()),
+  hireDate: z.preprocess(emptyToUndefined, z.string().optional()),
+  dateOfBirth: z.preprocess(emptyToUndefined, z.string().optional()),
+  gender: z.preprocess(emptyToUndefined, z.string().optional()),
+  address: z.preprocess(emptyToUndefined, z.string().optional()),
+  nationalId: z.preprocess(emptyToUndefined, z.string().optional()),
+  tin: z.preprocess(emptyToUndefined, z.string().optional()),
+  nssfNumber: z.preprocess(emptyToUndefined, z.string().optional()),
+  bankName: z.preprocess(emptyToUndefined, z.string().optional()),
+  bankAccount: z.preprocess(emptyToUndefined, z.string().optional()),
+  emergencyContact: z.preprocess(emptyToUndefined, z.string().optional()),
+  emergencyPhone: z.preprocess(emptyToUndefined, z.string().optional()),
+  baseSalary: z.coerce.number().min(0).optional(),
+  allowances: z.coerce.number().min(0).optional(),
   status: z.enum(["ACTIVE", "ON_LEAVE", "PROBATION", "TERMINATED"]).optional(),
-  probationEnd: z.string().optional(),
-  terminationDate: z.string().optional(),
-  terminationReason: z.string().optional(),
+  probationEnd: z.preprocess(emptyToUndefined, z.string().optional()),
+  terminationDate: z.preprocess(emptyToUndefined, z.string().optional()),
+  terminationReason: z.preprocess(emptyToUndefined, z.string().optional()),
+  reportsToId: z.preprocess(emptyToUndefined, z.string().nullable().optional()),
 });
 
 export const leaveRequestSchema = z.object({

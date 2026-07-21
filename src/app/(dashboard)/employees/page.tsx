@@ -48,6 +48,7 @@ export default function EmployeesPage() {
   const [form, setForm] = useState(emptyForm);
   const [deptForm, setDeptForm] = useState({ code: "", name: "", description: "" });
   const [notice, setNotice] = useState("");
+  const [noticeError, setNoticeError] = useState(false);
 
   const load = useCallback(() => {
     const qs = new URLSearchParams();
@@ -71,23 +72,45 @@ export default function EmployeesPage() {
 
   const createEmployee = async (close: () => void) => {
     setLoading(true);
-    const res = await fetch("/api/employees", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
+    setNotice("");
+    setNoticeError(false);
+    try {
+      const payload = {
+        fullName: form.fullName.trim(),
+        email: form.email.trim() || undefined,
+        phone: form.phone.trim() || undefined,
+        jobTitle: form.jobTitle.trim() || undefined,
         departmentId: form.departmentId || undefined,
-        email: form.email || undefined,
-      }),
-    }).then((r) => r.json());
-    setLoading(false);
-    if (res.success) {
-      setForm(emptyForm);
-      setShowCreate(false);
-      close();
-      setNotice("Employee created with leave balances");
-      load();
-    } else setNotice(res.message || "Failed");
+        hireDate: form.hireDate || undefined,
+        baseSalary: Number(form.baseSalary) || 0,
+        allowances: Number(form.allowances) || 0,
+        nationalId: form.nationalId.trim() || undefined,
+        nssfNumber: form.nssfNumber.trim() || undefined,
+        bankName: form.bankName.trim() || undefined,
+        bankAccount: form.bankAccount.trim() || undefined,
+      };
+      const res = await fetch("/api/employees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).then((r) => r.json());
+      if (res.success) {
+        setForm(emptyForm);
+        setShowCreate(false);
+        close();
+        setNoticeError(false);
+        setNotice("Employee created with leave balances");
+        load();
+      } else {
+        setNoticeError(true);
+        setNotice(res.message || "Failed to create employee");
+      }
+    } catch {
+      setNoticeError(true);
+      setNotice("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const createDept = async (close: () => void) => {
@@ -134,7 +157,13 @@ export default function EmployeesPage() {
       </header>
 
       {notice && (
-        <div className="rounded-xl border border-[#d5e8c8] bg-[#E8F2E0] px-4 py-3 text-sm text-[#105820]">
+        <div
+          className={`rounded-xl border px-4 py-3 text-sm ${
+            noticeError
+              ? "border-red-200 bg-red-50 text-red-700"
+              : "border-[#d5e8c8] bg-[#E8F2E0] text-[#105820]"
+          }`}
+        >
           {notice}
         </div>
       )}

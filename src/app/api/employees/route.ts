@@ -19,12 +19,19 @@ export const POST = withAuth(
   async ({ user, request }) => {
     const body = await request.json();
     const parsed = employeeSchema.safeParse(body);
-    if (!parsed.success) return errorResponse("Validation failed", parsed.error.issues);
+    if (!parsed.success) {
+      const first = parsed.error.issues[0];
+      const detail = first
+        ? `${first.path.join(".") || "form"}: ${first.message}`
+        : "Validation failed";
+      return errorResponse(detail, parsed.error.issues);
+    }
 
     try {
       const employee = await createEmployee(parsed.data, user.id);
       return successResponse(employee, "Employee created", 201);
     } catch (err) {
+      console.error("[POST /api/employees]", err);
       return errorResponse(err instanceof Error ? err.message : "Failed to create employee");
     }
   },

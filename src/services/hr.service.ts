@@ -278,49 +278,70 @@ export async function createEmployee(data: EmployeeInput, userId: string) {
   const employeeNumber = await generateDocumentNumber("EMP", prisma);
   const status = data.status || (data.probationEnd ? "PROBATION" : "ACTIVE");
 
+  const parseDate = (value?: string) => {
+    if (!value || !String(value).trim()) return null;
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+
+  const hireDate = parseDate(data.hireDate) || new Date();
+
   const employee = await prisma.employee.create({
     data: {
       employeeNumber,
-      fullName: data.fullName,
-      email: data.email || null,
-      phone: data.phone,
-      jobTitle: data.jobTitle,
+      fullName: data.fullName.trim(),
+      email: data.email?.trim() || null,
+      phone: data.phone?.trim() || null,
+      jobTitle: data.jobTitle?.trim() || null,
       departmentId: data.departmentId || null,
+      reportsToId: data.reportsToId || null,
       userId: data.userId || null,
-      hireDate: data.hireDate ? new Date(data.hireDate) : new Date(),
-      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-      gender: data.gender,
-      address: data.address,
-      nationalId: data.nationalId,
-      tin: data.tin,
-      nssfNumber: data.nssfNumber,
-      bankName: data.bankName,
-      bankAccount: data.bankAccount,
-      emergencyContact: data.emergencyContact,
-      emergencyPhone: data.emergencyPhone,
-      baseSalary: data.baseSalary || 0,
-      allowances: data.allowances || 0,
+      hireDate,
+      dateOfBirth: parseDate(data.dateOfBirth),
+      gender: data.gender?.trim() || null,
+      address: data.address?.trim() || null,
+      nationalId: data.nationalId?.trim() || null,
+      tin: data.tin?.trim() || null,
+      nssfNumber: data.nssfNumber?.trim() || null,
+      bankName: data.bankName?.trim() || null,
+      bankAccount: data.bankAccount?.trim() || null,
+      emergencyContact: data.emergencyContact?.trim() || null,
+      emergencyPhone: data.emergencyPhone?.trim() || null,
+      baseSalary: data.baseSalary ?? 0,
+      allowances: data.allowances ?? 0,
       status,
-      probationEnd: data.probationEnd ? new Date(data.probationEnd) : null,
+      probationEnd: parseDate(data.probationEnd),
       createdById: userId,
     },
     include: { department: true },
   });
 
-  await ensureEmployeeLeaveBalances(employee.id);
+  try {
+    await ensureEmployeeLeaveBalances(employee.id);
+  } catch (err) {
+    console.error("[createEmployee] leave balances failed", err);
+  }
 
-  const { ensureEmployeeChecklist } = await import("./hr-extended.service");
-  await ensureEmployeeChecklist(employee.id, "ONBOARDING");
+  try {
+    const { ensureEmployeeChecklist } = await import("./hr-extended.service");
+    await ensureEmployeeChecklist(employee.id, "ONBOARDING");
+  } catch (err) {
+    console.error("[createEmployee] onboarding checklist failed", err);
+  }
 
-  await createAuditLog({
-    userId,
-    action: "CREATE",
-    module: "employees",
-    recordId: employee.id,
-    newValue: { employeeNumber, fullName: data.fullName },
-  });
+  try {
+    await createAuditLog({
+      userId,
+      action: "CREATE",
+      module: "employees",
+      recordId: employee.id,
+      newValue: { employeeNumber, fullName: data.fullName },
+    });
+  } catch (err) {
+    console.error("[createEmployee] audit log failed", err);
+  }
 
-  return employee;
+  return serializeEmployee(employee);
 }
 
 export async function updateEmployee(

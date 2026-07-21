@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge, formatCurrency } from "@/components/ui/data-table";
 import { PageLoader } from "@/components/ui/page-loader";
+import { CreditLimitAlert } from "@/components/ui/credit-limit-alert";
 import { formatDate } from "@/lib/utils";
 
 export default function CustomerDetailPage() {
@@ -46,7 +47,14 @@ export default function CustomerDetailPage() {
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Status</p><StatusBadge status={String(customer.status)} /></CardContent></Card>
         <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Credit Limit</p><p className="text-xl font-bold">{formatCurrency(Number(customer.creditLimit || 0))}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Payment Terms</p><p className="text-xl font-bold">{String(customer.paymentTerms || 30)} days</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-gray-500">Outstanding balance</p><p className="text-xl font-bold">{formatCurrency(Number(customer.balance || 0))}</p></CardContent></Card>
+      </div>
+
+      <div className="mb-6">
+        <CreditLimitAlert
+          balance={Number(customer.balance || 0)}
+          creditLimit={Number(customer.creditLimit || 0)}
+        />
       </div>
 
       <Card className="mb-6">

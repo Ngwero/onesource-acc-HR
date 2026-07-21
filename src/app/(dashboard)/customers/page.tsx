@@ -10,6 +10,7 @@ import { FormModal, FormField, FormActions, apiPost } from "@/components/ui/form
 import { BulkImportPanel } from "@/components/modules/bulk-import-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { evaluateCreditLimit } from "@/lib/credit-limit";
 
 type CustomerForm = {
   code: string; name: string; contactPerson: string; phone: string; email: string;
@@ -62,28 +63,99 @@ export default function CustomersPage() {
     else alert(res.message);
   };
 
-  const FormFields = ({ form, setForm, codeDisabled }: { form: CustomerForm; setForm: (f: CustomerForm) => void; codeDisabled?: boolean }) => (
+  const FormFields = ({
+    form,
+    setForm,
+    codeDisabled,
+  }: {
+    form: CustomerForm;
+    setForm: React.Dispatch<React.SetStateAction<CustomerForm>>;
+    codeDisabled?: boolean;
+  }) => (
     <>
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label="Code"><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} required disabled={codeDisabled} /></FormField>
-        <FormField label="Name"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></FormField>
+        <FormField label="Code">
+          <Input
+            value={form.code}
+            onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))}
+            required
+            disabled={codeDisabled}
+          />
+        </FormField>
+        <FormField label="Name">
+          <Input
+            value={form.name}
+            onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+            required
+          />
+        </FormField>
       </div>
-      <FormField label="Contact Person"><Input value={form.contactPerson} onChange={(e) => setForm({ ...form, contactPerson: e.target.value })} /></FormField>
+      <FormField label="Contact Person">
+        <Input
+          value={form.contactPerson}
+          onChange={(e) => setForm((prev) => ({ ...prev, contactPerson: e.target.value }))}
+        />
+      </FormField>
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label="Phone"><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></FormField>
-        <FormField label="Email"><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></FormField>
+        <FormField label="Phone">
+          <Input
+            value={form.phone}
+            onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+          />
+        </FormField>
+        <FormField label="Email">
+          <Input
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+          />
+        </FormField>
       </div>
-      <FormField label="Country"><Input value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} /></FormField>
+      <FormField label="Country">
+        <Input
+          value={form.country}
+          onChange={(e) => setForm((prev) => ({ ...prev, country: e.target.value }))}
+        />
+      </FormField>
       <FormField label="Type">
-        <Select value={form.customerType} onChange={(e) => setForm({ ...form, customerType: e.target.value })}>
-          {["LOCAL_BUYER", "SUPERMARKET", "HOTEL", "WHOLESALER", "EXPORTER_IMPORTER", "DISTRIBUTOR"].map((t) => (
-            <option key={t} value={t}>{t.replace(/_/g, " ")}</option>
-          ))}
+        <Select
+          value={form.customerType}
+          onChange={(e) => setForm((prev) => ({ ...prev, customerType: e.target.value }))}
+        >
+          {["LOCAL_BUYER", "SUPERMARKET", "HOTEL", "WHOLESALER", "EXPORTER_IMPORTER", "DISTRIBUTOR"].map(
+            (t) => (
+              <option key={t} value={t}>
+                {t.replace(/_/g, " ")}
+              </option>
+            )
+          )}
         </Select>
       </FormField>
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label="Credit Limit"><Input type="number" value={form.creditLimit} onChange={(e) => setForm({ ...form, creditLimit: +e.target.value })} /></FormField>
-        <FormField label="Payment Terms"><Input type="number" value={form.paymentTerms} onChange={(e) => setForm({ ...form, paymentTerms: +e.target.value })} /></FormField>
+        <FormField label="Credit Limit">
+          <Input
+            type="number"
+            value={form.creditLimit}
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                creditLimit: e.target.value === "" ? 0 : +e.target.value,
+              }))
+            }
+          />
+        </FormField>
+        <FormField label="Payment Terms">
+          <Input
+            type="number"
+            value={form.paymentTerms}
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                paymentTerms: e.target.value === "" ? 0 : +e.target.value,
+              }))
+            }
+          />
+        </FormField>
       </div>
     </>
   );
@@ -113,33 +185,67 @@ export default function CustomersPage() {
         </div>
       )}
 
-      {showCreate && (
-        <FormModal title="Add Customer" open onOpenChange={setShowCreate}>
-          {({ close }) => (
-            <form onSubmit={(e) => { e.preventDefault(); save("/api/customers", "POST", createForm, close); }} className="space-y-3">
-              <FormFields form={createForm} setForm={setCreateForm} />
-              <FormActions onCancel={close} loading={loading} />
-            </form>
-          )}
-        </FormModal>
-      )}
+      <FormModal title="Add Customer" open={showCreate} onOpenChange={setShowCreate}>
+        {({ close }) => (
+          <form onSubmit={(e) => { e.preventDefault(); save("/api/customers", "POST", createForm, close); }} className="space-y-3">
+            <FormFields form={createForm} setForm={setCreateForm} />
+            <FormActions onCancel={close} loading={loading} />
+          </form>
+        )}
+      </FormModal>
 
-      {editingId && (
-        <FormModal title="Edit Customer" open onOpenChange={(o) => { if (!o) setEditingId(null); }}>
-          {({ close }) => (
-            <form onSubmit={(e) => { e.preventDefault(); save(`/api/customers/${editingId}`, "PUT", editForm, close); }} className="space-y-3">
-              <FormFields form={editForm} setForm={setEditForm} codeDisabled />
-              <FormActions onCancel={close} loading={loading} />
-            </form>
-          )}
-        </FormModal>
-      )}
+      <FormModal
+        title="Edit Customer"
+        open={!!editingId}
+        onOpenChange={(o) => {
+          if (!o) setEditingId(null);
+        }}
+      >
+        {({ close }) => (
+          <form onSubmit={(e) => { e.preventDefault(); save(`/api/customers/${editingId}`, "PUT", editForm, close); }} className="space-y-3">
+            <FormFields form={editForm} setForm={setEditForm} codeDisabled />
+            <FormActions onCancel={close} loading={loading} />
+          </form>
+        )}
+      </FormModal>
 
       <DataTable loading={fetching} columns={[
         { key: "code", header: "ID" }, { key: "name", header: "Name" }, { key: "customerType", header: "Type" },
         { key: "country", header: "Country" },
         { key: "creditLimit", header: "Credit Limit", render: (i) => formatCurrency(Number(i.creditLimit)) },
         { key: "balance", header: "Balance", render: (i) => formatCurrency(Number(i.balance)) },
+        {
+          key: "creditAlert",
+          header: "Credit alert",
+          render: (i) => {
+            const status = evaluateCreditLimit({
+              balance: Number(i.balance || 0),
+              creditLimit: Number(i.creditLimit || 0),
+            });
+            if (status.creditLimit <= 0) {
+              return <span className="text-xs text-slate-400">No limit</span>;
+            }
+            if (status.isOverLimit) {
+              return (
+                <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
+                  OVER {status.utilizationPct}%
+                </span>
+              );
+            }
+            if (status.isNearLimit) {
+              return (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+                  Near {status.utilizationPct}%
+                </span>
+              );
+            }
+            return (
+              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                OK {status.utilizationPct}%
+              </span>
+            );
+          },
+        },
         { key: "status", header: "Status", render: (i) => <StatusBadge status={String(i.status)} /> },
         { key: "id", header: "Actions", render: (i) => (
           <div className="flex gap-1">

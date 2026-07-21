@@ -61,7 +61,18 @@ interface DashboardData {
     stockValue?: number;
     unpaidInvoices?: number;
     overdueInvoices?: number;
+    creditLimitAlertCount?: number;
   };
+  creditLimitAlerts?: Array<{
+    id: string;
+    name: string;
+    code: string;
+    balance: number;
+    creditLimit: number;
+    utilizationPct: number;
+    isOverLimit: boolean;
+    isNearLimit: boolean;
+  }>;
   expenseCategories: Array<{ name: string; amount: number }>;
   topProduce?: Array<{ name: string; quantity: number; revenue: number }>;
   salesSeries: { seriesNames: string[]; data: Array<Record<string, string | number>> };
@@ -272,6 +283,38 @@ export default function DashboardPage() {
           </Link>
         </div>
       </header>
+
+      {(data?.creditLimitAlerts?.length || 0) > 0 && (
+        <section className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 sm:px-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-amber-950">
+                Credit limit alerts ({data?.summary.creditLimitAlertCount || data?.creditLimitAlerts?.length})
+              </p>
+              <p className="mt-0.5 text-xs text-amber-800/80">
+                Customers at or near their credit limit need attention before more credit sales.
+              </p>
+            </div>
+            <Link href="/customers" className="text-sm font-semibold text-amber-900 underline">
+              View customers
+            </Link>
+          </div>
+          <ul className="mt-3 space-y-1.5">
+            {(data?.creditLimitAlerts || []).slice(0, 5).map((c) => (
+              <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                <Link href={`/customers/${c.id}`} className="font-medium text-amber-950 hover:underline">
+                  {c.name}
+                  <span className="ml-1 text-xs font-normal text-amber-800/70">({c.code})</span>
+                </Link>
+                <span className={c.isOverLimit ? "font-semibold text-red-700" : "text-amber-900"}>
+                  {c.utilizationPct}% · {formatCurrency(c.balance)} / {formatCurrency(c.creditLimit)}
+                  {c.isOverLimit ? " · OVER" : " · near"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* KPI strip */}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

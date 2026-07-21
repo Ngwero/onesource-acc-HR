@@ -148,6 +148,31 @@ export const GET = withAuth(
       where: { status: { in: ["UNPAID", "PARTIALLY_PAID"] } },
     });
 
+    const creditWatchCustomers = await prisma.customer.findMany({
+      where: { status: "ACTIVE", deletedAt: null, creditLimit: { gt: 0 } },
+      select: { id: true, name: true, code: true, balance: true, creditLimit: true },
+      take: 200,
+    });
+    const creditLimitAlerts = creditWatchCustomers
+      .map((c) => {
+        const balance = Number(c.balance);
+        const creditLimit = Number(c.creditLimit);
+        const utilizationPct = creditLimit > 0 ? (balance / creditLimit) * 100 : 0;
+        return {
+          id: c.id,
+          name: c.name,
+          code: c.code,
+          balance,
+          creditLimit,
+          utilizationPct: Math.round(utilizationPct),
+          isOverLimit: balance >= creditLimit,
+          isNearLimit: utilizationPct >= 80 && balance < creditLimit,
+        };
+      })
+      .filter((c) => c.isOverLimit || c.isNearLimit)
+      .sort((a, b) => b.utilizationPct - a.utilizationPct)
+      .slice(0, 10);
+
     const cashAccount = await prisma.chartOfAccount.findUnique({ where: { code: "1100" } });
     const bankAccount = await prisma.chartOfAccount.findUnique({ where: { code: "1110" } });
     const cashBankBalance =
@@ -213,7 +238,9 @@ export const GET = withAuth(
         unpaidInvoices,
         overdueInvoices,
         cashBankBalance,
+        creditLimitAlertCount: creditLimitAlerts.length,
       },
+      creditLimitAlerts,
       topProduce,
       expenseCategories,
       salesSeries,

@@ -17,8 +17,13 @@ export async function confirmSale(saleId: string, userId: string) {
   const isCredit = sale.paymentMethod !== "CASH" && sale.paymentStatus !== "PAID";
 
   if (isCredit) {
-    const newBalance = Number(sale.customer.balance) + Number(sale.totalAmount);
-    if (newBalance > Number(sale.customer.creditLimit)) {
+    const limit = Number(sale.customer.creditLimit) || 0;
+    const balance = Number(sale.customer.balance) || 0;
+    const amount = Number(sale.totalAmount) || 0;
+    const newBalance = balance + amount;
+    const exceeds = limit <= 0 ? amount > 0 : newBalance > limit;
+
+    if (exceeds) {
       const existingApproval = await prisma.approvalRequest.findFirst({
         where: {
           recordModule: "local_sales",
@@ -31,6 +36,7 @@ export async function confirmSale(saleId: string, userId: string) {
           where: { recordModule: "local_sales", recordId: saleId, status: "PENDING" },
         });
         if (!pending) {
+          const overBy = limit > 0 ? newBalance - limit : amount;
           await prisma.approvalRequest.create({
             data: {
               requestType: "CREDIT_SALE",
@@ -38,17 +44,31 @@ export async function confirmSale(saleId: string, userId: string) {
               recordId: saleId,
               requestedById: userId,
               amount: sale.totalAmount,
-              comments: `Credit limit exceeded for ${sale.customer.name}. Sale ${sale.saleNumber}`,
+              comments:
+                limit > 0
+                  ? `Credit limit exceeded for ${sale.customer.name}. Balance ${balance} + sale ${amount} > limit ${limit} (over by ${overBy}). Sale ${sale.saleNumber}`
+                  : `No credit limit set for ${sale.customer.name}. Credit sale ${sale.saleNumber} requires approval.`,
             },
           });
-          await notifyManagers({
-            type: "PENDING_APPROVAL",
-            title: "Credit sale approval required",
-            message: `${sale.saleNumber} for ${sale.customer.name} exceeds credit limit`,
-            link: "/approvals",
-          });
+          try {
+            await notifyManagers({
+              type: "PENDING_APPROVAL",
+              title: "Credit limit alert",
+              message:
+                limit > 0
+                  ? `${sale.saleNumber} for ${sale.customer.name} exceeds credit limit (over by ${overBy.toLocaleString()})`
+                  : `${sale.saleNumber} for ${sale.customer.name} needs approval — no credit limit set`,
+              link: "/approvals",
+            });
+          } catch (err) {
+            console.error("[confirmSale] credit alert notify failed", err);
+          }
         }
-        throw new Error("Credit limit exceeded. Manager approval required — check Approvals page.");
+        throw new Error(
+          limit > 0
+            ? "Credit limit exceeded. Manager approval required — check Approvals / notifications."
+            : "No credit limit set for this customer. Manager approval required — check Approvals."
+        );
       }
     }
   }

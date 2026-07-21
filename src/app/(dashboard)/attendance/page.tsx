@@ -153,7 +153,7 @@ export default function AttendancePage() {
       </section>
 
       {show && (
-        <FormModal title="Record attendance" open onOpenChange={setShow}>
+        <FormModal title="Record attendance" open={show} onOpenChange={setShow}>
           {({ close }) => (
             <form
               className="space-y-3"
@@ -166,7 +166,7 @@ export default function AttendancePage() {
                 <Select
                   required
                   value={form.employeeId}
-                  onChange={(e) => setForm({ ...form, employeeId: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, employeeId: e.target.value }))}
                 >
                   <option value="">Select…</option>
                   {employees.map((e) => (
@@ -181,13 +181,13 @@ export default function AttendancePage() {
                   type="date"
                   required
                   value={form.date}
-                  onChange={(e) => setForm({ ...form, date: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))}
                 />
               </FormField>
               <FormField label="Status">
                 <Select
                   value={form.status}
-                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))}
                 >
                   {["PRESENT", "ABSENT", "HALF_DAY", "LATE", "ON_LEAVE", "HOLIDAY"].map((s) => (
                     <option key={s} value={s}>
@@ -199,7 +199,7 @@ export default function AttendancePage() {
               <FormField label="Notes">
                 <Input
                   value={form.notes}
-                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
                 />
               </FormField>
               <FormActions onCancel={close} loading={loading} />

@@ -96,34 +96,34 @@ export default function CreditNotesPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Credit Note" open onOpenChange={setShowForm}>
+        <FormModal title="New Credit Note" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Type">
-                <Select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+                <Select value={form.type} onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}>
                   <option value="SALES">Sales Credit Note</option>
                   <option value="PURCHASE">Purchase Credit Note</option>
                 </Select>
               </FormField>
               {form.type === "SALES" ? (
                 <FormField label="Customer">
-                  <Select value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} required>
+                  <Select value={form.customerId} onChange={(e) => setForm((prev) => ({ ...prev, customerId: e.target.value }))} required>
                     <option value="">Select customer</option>
                     {customers.map((c) => <option key={String(c.id)} value={String(c.id)}>{String(c.name)}</option>)}
                   </Select>
                 </FormField>
               ) : (
                 <FormField label="Supplier">
-                  <Select value={form.supplierId} onChange={(e) => setForm({ ...form, supplierId: e.target.value })} required>
+                  <Select value={form.supplierId} onChange={(e) => setForm((prev) => ({ ...prev, supplierId: e.target.value }))} required>
                     <option value="">Select supplier</option>
                     {suppliers.map((s) => <option key={String(s.id)} value={String(s.id)}>{String(s.name)}</option>)}
                   </Select>
                 </FormField>
               )}
-              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required /></FormField>
-              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: +e.target.value })} /></FormField>
-              <FormField label="Unit Price"><Input type="number" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: +e.target.value })} /></FormField>
-              <FormField label="Reason"><Input value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} /></FormField>
+              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} required /></FormField>
+              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm((prev) => ({ ...prev, quantity: +e.target.value }))} /></FormField>
+              <FormField label="Unit Price"><Input type="number" value={form.unitPrice} onChange={(e) => setForm((prev) => ({ ...prev, unitPrice: +e.target.value }))} /></FormField>
+              <FormField label="Reason"><Input value={form.reason} onChange={(e) => setForm((prev) => ({ ...prev, reason: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
@@ -131,7 +131,7 @@ export default function CreditNotesPage() {
       )}
 
       {applyTarget && (
-        <FormModal title={`Apply ${String(applyTarget.creditNoteNumber)}`} open onOpenChange={() => setApplyTarget(null)}>
+        <FormModal title={`Apply ${String(applyTarget.creditNoteNumber)}`} open={!!applyTarget} onOpenChange={(open) => { if (!open) setApplyTarget(null); }}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleApply(close); }} className="space-y-3">
               <p className="text-sm text-gray-600">
@@ -139,7 +139,7 @@ export default function CreditNotesPage() {
               </p>
               {applyTarget.type === "SALES" ? (
                 <FormField label="Receivable">
-                  <Select value={applyForm.receivableId} onChange={(e) => setApplyForm({ ...applyForm, receivableId: e.target.value })} required>
+                  <Select value={applyForm.receivableId} onChange={(e) => setApplyForm((prev) => ({ ...prev, receivableId: e.target.value }))} required>
                     <option value="">Select open receivable</option>
                     {openReceivables.map((r) => (
                       <option key={String(r.id)} value={String(r.id)}>
@@ -150,7 +150,7 @@ export default function CreditNotesPage() {
                 </FormField>
               ) : (
                 <FormField label="Payable">
-                  <Select value={applyForm.payableId} onChange={(e) => setApplyForm({ ...applyForm, payableId: e.target.value })} required>
+                  <Select value={applyForm.payableId} onChange={(e) => setApplyForm((prev) => ({ ...prev, payableId: e.target.value }))} required>
                     <option value="">Select open payable</option>
                     {openPayables.map((p) => (
                       <option key={String(p.id)} value={String(p.id)}>

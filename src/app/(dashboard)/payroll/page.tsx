@@ -249,7 +249,7 @@ export default function PayrollPage() {
       </section>
 
       {show && (
-        <FormModal title="New pay run" open onOpenChange={setShow}>
+        <FormModal title="New pay run" open={show} onOpenChange={setShow}>
           {({ close }) => (
             <form
               className="space-y-3"
@@ -264,7 +264,7 @@ export default function PayrollPage() {
                     type="date"
                     required
                     value={form.periodStart}
-                    onChange={(e) => setForm({ ...form, periodStart: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, periodStart: e.target.value }))}
                   />
                 </FormField>
                 <FormField label="Period end">
@@ -272,14 +272,14 @@ export default function PayrollPage() {
                     type="date"
                     required
                     value={form.periodEnd}
-                    onChange={(e) => setForm({ ...form, periodEnd: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, periodEnd: e.target.value }))}
                   />
                 </FormField>
               </div>
               <FormField label="Payment method">
                 <Select
                   value={form.paymentMethod}
-                  onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, paymentMethod: e.target.value }))}
                 >
                   <option value="BANK_TRANSFER">Bank transfer</option>
                   <option value="CASH">Cash</option>
@@ -289,7 +289,7 @@ export default function PayrollPage() {
               <FormField label="Notes">
                 <Input
                   value={form.notes}
-                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
                 />
               </FormField>
               <p className="rounded-xl bg-[#F3F8F0] px-3 py-2 text-xs text-slate-600">

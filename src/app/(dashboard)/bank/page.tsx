@@ -235,7 +235,7 @@ export default function BankPage() {
       />
 
       {showMatch && matchTx && (
-        <FormModal title="Match Bank Transaction" open onOpenChange={setShowMatch}>
+        <FormModal title="Match Bank Transaction" open={showMatch} onOpenChange={setShowMatch}>
           {() => (
             <div className="space-y-4">
               <div className="rounded border bg-gray-50 p-3 text-sm">
@@ -320,13 +320,13 @@ export default function BankPage() {
       )}
 
       {showSplit && (
-        <FormModal title="Split Bank Transaction" open onOpenChange={setShowSplit}>
+        <FormModal title="Split Bank Transaction" open={showSplit} onOpenChange={setShowSplit}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleSplit(close); }} className="space-y-3">
-              <FormField label="Split 1 Amount"><Input type="number" value={splitForm.amount1} onChange={(e) => setSplitForm({ ...splitForm, amount1: +e.target.value })} /></FormField>
-              <FormField label="Split 1 Description"><Input value={splitForm.desc1} onChange={(e) => setSplitForm({ ...splitForm, desc1: e.target.value })} /></FormField>
-              <FormField label="Split 2 Amount"><Input type="number" value={splitForm.amount2} onChange={(e) => setSplitForm({ ...splitForm, amount2: +e.target.value })} /></FormField>
-              <FormField label="Split 2 Description"><Input value={splitForm.desc2} onChange={(e) => setSplitForm({ ...splitForm, desc2: e.target.value })} /></FormField>
+              <FormField label="Split 1 Amount"><Input type="number" value={splitForm.amount1} onChange={(e) => setSplitForm((prev) => ({ ...prev, amount1: +e.target.value }))} /></FormField>
+              <FormField label="Split 1 Description"><Input value={splitForm.desc1} onChange={(e) => setSplitForm((prev) => ({ ...prev, desc1: e.target.value }))} /></FormField>
+              <FormField label="Split 2 Amount"><Input type="number" value={splitForm.amount2} onChange={(e) => setSplitForm((prev) => ({ ...prev, amount2: +e.target.value }))} /></FormField>
+              <FormField label="Split 2 Description"><Input value={splitForm.desc2} onChange={(e) => setSplitForm((prev) => ({ ...prev, desc2: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
@@ -334,14 +334,14 @@ export default function BankPage() {
       )}
 
       {showCreate && (
-        <FormModal title="Add Bank Account" open onOpenChange={setShowCreate}>
+        <FormModal title="Add Bank Account" open={showCreate} onOpenChange={setShowCreate}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
-              <FormField label="Code"><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} required /></FormField>
-              <FormField label="Account Name"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></FormField>
-              <FormField label="Bank Name"><Input value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} /></FormField>
-              <FormField label="Account Number"><Input value={form.accountNumber} onChange={(e) => setForm({ ...form, accountNumber: e.target.value })} /></FormField>
-              <FormField label="Opening Balance"><Input type="number" value={form.openingBalance} onChange={(e) => setForm({ ...form, openingBalance: +e.target.value })} /></FormField>
+              <FormField label="Code"><Input value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} required /></FormField>
+              <FormField label="Account Name"><Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
+              <FormField label="Bank Name"><Input value={form.bankName} onChange={(e) => setForm((prev) => ({ ...prev, bankName: e.target.value }))} /></FormField>
+              <FormField label="Account Number"><Input value={form.accountNumber} onChange={(e) => setForm((prev) => ({ ...prev, accountNumber: e.target.value }))} /></FormField>
+              <FormField label="Opening Balance"><Input type="number" value={form.openingBalance} onChange={(e) => setForm((prev) => ({ ...prev, openingBalance: +e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
@@ -349,19 +349,19 @@ export default function BankPage() {
       )}
 
       {showImport && (
-        <FormModal title="Import Bank Transaction" open onOpenChange={setShowImport}>
+        <FormModal title="Import Bank Transaction" open={showImport} onOpenChange={setShowImport}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleImport(close); }} className="space-y-3">
               <FormField label="Bank Account">
-                <Select value={importForm.bankAccountId} onChange={(e) => setImportForm({ ...importForm, bankAccountId: e.target.value })} required>
+                <Select value={importForm.bankAccountId} onChange={(e) => setImportForm((prev) => ({ ...prev, bankAccountId: e.target.value }))} required>
                   <option value="">Select account</option>
                   {accounts.map((a) => <option key={String(a.id)} value={String(a.id)}>{String(a.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Description"><Input value={importForm.description} onChange={(e) => setImportForm({ ...importForm, description: e.target.value })} required /></FormField>
-              <FormField label="Amount"><Input type="number" value={importForm.amount} onChange={(e) => setImportForm({ ...importForm, amount: +e.target.value })} required /></FormField>
+              <FormField label="Description"><Input value={importForm.description} onChange={(e) => setImportForm((prev) => ({ ...prev, description: e.target.value }))} required /></FormField>
+              <FormField label="Amount"><Input type="number" value={importForm.amount} onChange={(e) => setImportForm((prev) => ({ ...prev, amount: +e.target.value }))} required /></FormField>
               <FormField label="Type">
-                <Select value={importForm.type} onChange={(e) => setImportForm({ ...importForm, type: e.target.value })}>
+                <Select value={importForm.type} onChange={(e) => setImportForm((prev) => ({ ...prev, type: e.target.value }))}>
                   <option value="RECEIPT">Receipt</option>
                   <option value="PAYMENT">Payment</option>
                   <option value="FEE">Fee</option>
@@ -374,11 +374,11 @@ export default function BankPage() {
       )}
 
       {showCsv && (
-        <FormModal title="Import Bank CSV" open onOpenChange={setShowCsv}>
+        <FormModal title="Import Bank CSV" open={showCsv} onOpenChange={setShowCsv}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCsvImport(close); }} className="space-y-3">
               <FormField label="Bank Account">
-                <Select value={csvForm.bankAccountId} onChange={(e) => setCsvForm({ ...csvForm, bankAccountId: e.target.value })} required>
+                <Select value={csvForm.bankAccountId} onChange={(e) => setCsvForm((prev) => ({ ...prev, bankAccountId: e.target.value }))} required>
                   <option value="">Select account</option>
                   {accounts.map((a) => <option key={String(a.id)} value={String(a.id)}>{String(a.name)}</option>)}
                 </Select>
@@ -387,7 +387,7 @@ export default function BankPage() {
                 <textarea
                   className="min-h-32 w-full rounded-md border border-gray-300 p-2 text-sm"
                   value={csvForm.csvText}
-                  onChange={(e) => setCsvForm({ ...csvForm, csvText: e.target.value })}
+                  onChange={(e) => setCsvForm((prev) => ({ ...prev, csvText: e.target.value }))}
                   placeholder={"date,description,amount\n2025-01-15,Supplier payment,-50000\n2025-01-16,Customer receipt,120000"}
                 />
               </FormField>
@@ -398,7 +398,7 @@ export default function BankPage() {
       )}
 
       {showReconcile && (
-        <FormModal title="Complete Bank Reconciliation" open onOpenChange={setShowReconcile}>
+        <FormModal title="Complete Bank Reconciliation" open={showReconcile} onOpenChange={setShowReconcile}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCompleteReconciliation(close); }} className="space-y-3">
               <p className="text-xs text-amber-600">All transactions must be matched or excluded. Statement variance posts to GL (1110/5900/4300).</p>
@@ -407,7 +407,7 @@ export default function BankPage() {
                   value={reconcileForm.bankAccountId}
                   onChange={(e) => {
                     const id = e.target.value;
-                    setReconcileForm({ ...reconcileForm, bankAccountId: id });
+                    setReconcileForm((prev) => ({ ...prev, bankAccountId: id }));
                     if (id) loadReconcileSummary(id, reconcileForm.closingBalance);
                   }}
                   required
@@ -416,19 +416,19 @@ export default function BankPage() {
                   {accounts.map((a) => <option key={String(a.id)} value={String(a.id)}>{String(a.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Statement Date"><Input type="date" value={reconcileForm.statementDate} onChange={(e) => setReconcileForm({ ...reconcileForm, statementDate: e.target.value })} required /></FormField>
-              <FormField label="Opening Balance"><Input type="number" value={reconcileForm.openingBalance} onChange={(e) => setReconcileForm({ ...reconcileForm, openingBalance: +e.target.value })} required /></FormField>
+              <FormField label="Statement Date"><Input type="date" value={reconcileForm.statementDate} onChange={(e) => setReconcileForm((prev) => ({ ...prev, statementDate: e.target.value }))} required /></FormField>
+              <FormField label="Opening Balance"><Input type="number" value={reconcileForm.openingBalance} onChange={(e) => setReconcileForm((prev) => ({ ...prev, openingBalance: +e.target.value }))} required /></FormField>
               <FormField label="Closing Balance (Statement)">
                 <Input
                   type="number"
                   value={reconcileForm.closingBalance}
                   onChange={(e) => {
                     const closing = +e.target.value;
-                    setReconcileForm({
-                      ...reconcileForm,
+                    setReconcileForm((prev) => ({
+                      ...prev,
                       closingBalance: closing,
                       variance: closing - reconcileForm.bookBalance,
-                    });
+                    }));
                   }}
                   required
                 />
@@ -441,7 +441,7 @@ export default function BankPage() {
                   </p>
                 </div>
               )}
-              <FormField label="Notes"><Input value={reconcileForm.notes} onChange={(e) => setReconcileForm({ ...reconcileForm, notes: e.target.value })} /></FormField>
+              <FormField label="Notes"><Input value={reconcileForm.notes} onChange={(e) => setReconcileForm((prev) => ({ ...prev, notes: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

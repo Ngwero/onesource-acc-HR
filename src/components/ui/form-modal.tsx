@@ -8,6 +8,7 @@ interface FormModalProps {
   title: string;
   triggerLabel?: string;
   children: React.ReactNode | ((props: { close: () => void }) => React.ReactNode);
+  /** Always bind to parent state: open={showForm} — never use bare `open` (always true). */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }

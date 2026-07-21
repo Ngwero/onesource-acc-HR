@@ -125,7 +125,7 @@ export default function PeriodClosePage() {
       </Card>
 
       {showYearEnd && (
-        <FormModal title="Year-End Close" open onOpenChange={setShowYearEnd}>
+        <FormModal title="Year-End Close" open={showYearEnd} onOpenChange={setShowYearEnd}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); runYearEnd(close); }} className="space-y-3">
               <p className="text-sm text-gray-600">

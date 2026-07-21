@@ -57,22 +57,22 @@ export default function BudgetsPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Budget" open onOpenChange={setShowForm}>
+        <FormModal title="New Budget" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
-              <FormField label="Budget Name"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></FormField>
-              <FormField label="Fiscal Year"><Input type="number" value={form.fiscalYear} onChange={(e) => setForm({ ...form, fiscalYear: +e.target.value })} /></FormField>
-              <FormField label="Start Date"><Input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} required /></FormField>
-              <FormField label="End Date"><Input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} required /></FormField>
+              <FormField label="Budget Name"><Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
+              <FormField label="Fiscal Year"><Input type="number" value={form.fiscalYear} onChange={(e) => setForm((prev) => ({ ...prev, fiscalYear: +e.target.value }))} /></FormField>
+              <FormField label="Start Date"><Input type="date" value={form.startDate} onChange={(e) => setForm((prev) => ({ ...prev, startDate: e.target.value }))} required /></FormField>
+              <FormField label="End Date"><Input type="date" value={form.endDate} onChange={(e) => setForm((prev) => ({ ...prev, endDate: e.target.value }))} required /></FormField>
               <FormField label="Account">
-                <Select value={form.accountId} onChange={(e) => setForm({ ...form, accountId: e.target.value })} required>
+                <Select value={form.accountId} onChange={(e) => setForm((prev) => ({ ...prev, accountId: e.target.value }))} required>
                   <option value="">Select account</option>
                   {accounts.map((a) => <option key={String(a.id)} value={String(a.id)}>{String(a.code)} — {String(a.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Budget Amount"><Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: +e.target.value })} required /></FormField>
+              <FormField label="Budget Amount"><Input type="number" value={form.amount} onChange={(e) => setForm((prev) => ({ ...prev, amount: +e.target.value }))} required /></FormField>
               <FormField label="Period">
-                <Select value={form.period} onChange={(e) => setForm({ ...form, period: e.target.value })}>
+                <Select value={form.period} onChange={(e) => setForm((prev) => ({ ...prev, period: e.target.value }))}>
                   <option value="ANNUAL">Annual</option>
                   <option value="QUARTERLY">Quarterly</option>
                   <option value="MONTHLY">Monthly</option>

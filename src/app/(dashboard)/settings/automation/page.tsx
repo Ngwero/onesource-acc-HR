@@ -161,11 +161,11 @@ export default function AutomationPage() {
       </Card>
 
       {showKeyForm && (
-        <FormModal title="Create API Key" open onOpenChange={setShowKeyForm}>
+        <FormModal title="Create API Key" open={showKeyForm} onOpenChange={setShowKeyForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); createKey(close); }} className="space-y-3">
-              <FormField label="Name"><Input value={keyForm.name} onChange={(e) => setKeyForm({ ...keyForm, name: e.target.value })} required /></FormField>
-              <FormField label="Scopes (comma-separated)"><Input value={keyForm.scopes} onChange={(e) => setKeyForm({ ...keyForm, scopes: e.target.value })} /></FormField>
+              <FormField label="Name"><Input value={keyForm.name} onChange={(e) => setKeyForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
+              <FormField label="Scopes (comma-separated)"><Input value={keyForm.scopes} onChange={(e) => setKeyForm((prev) => ({ ...prev, scopes: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
@@ -173,12 +173,12 @@ export default function AutomationPage() {
       )}
 
       {showHookForm && (
-        <FormModal title="Add Webhook" open onOpenChange={setShowHookForm}>
+        <FormModal title="Add Webhook" open={showHookForm} onOpenChange={setShowHookForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); createHook(close); }} className="space-y-3">
-              <FormField label="Name"><Input value={hookForm.name} onChange={(e) => setHookForm({ ...hookForm, name: e.target.value })} required /></FormField>
-              <FormField label="URL"><Input value={hookForm.url} onChange={(e) => setHookForm({ ...hookForm, url: e.target.value })} required placeholder="https://example.com/webhook" /></FormField>
-              <FormField label="Events"><Input value={hookForm.events} onChange={(e) => setHookForm({ ...hookForm, events: e.target.value })} /></FormField>
+              <FormField label="Name"><Input value={hookForm.name} onChange={(e) => setHookForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
+              <FormField label="URL"><Input value={hookForm.url} onChange={(e) => setHookForm((prev) => ({ ...prev, url: e.target.value }))} required placeholder="https://example.com/webhook" /></FormField>
+              <FormField label="Events"><Input value={hookForm.events} onChange={(e) => setHookForm((prev) => ({ ...prev, events: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

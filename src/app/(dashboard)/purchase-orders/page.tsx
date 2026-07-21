@@ -122,26 +122,26 @@ export default function PurchaseOrdersPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Purchase Order" open onOpenChange={setShowForm}>
+        <FormModal title="New Purchase Order" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Supplier">
-                <Select value={form.supplierId} onChange={(e) => setForm({ ...form, supplierId: e.target.value })} required>
+                <Select value={form.supplierId} onChange={(e) => setForm((prev) => ({ ...prev, supplierId: e.target.value }))} required>
                   <option value="">Select supplier</option>
                   {suppliers.map((s) => <option key={String(s.id)} value={String(s.id)}>{String(s.name)}</option>)}
                 </Select>
               </FormField>
               <FormField label="Produce">
-                <Select value={form.produceId} onChange={(e) => setForm({ ...form, produceId: e.target.value })} required>
+                <Select value={form.produceId} onChange={(e) => setForm((prev) => ({ ...prev, produceId: e.target.value }))} required>
                   <option value="">Select produce</option>
                   {produces.map((p) => <option key={String(p.id)} value={String(p.id)}>{String(p.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Expected Date"><Input type="date" value={form.expectedDate} onChange={(e) => setForm({ ...form, expectedDate: e.target.value })} /></FormField>
-              <FormField label="Item Description"><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required /></FormField>
-              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: +e.target.value })} /></FormField>
-              <FormField label="Unit Price"><Input type="number" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: +e.target.value })} /></FormField>
-              <FormField label="Notes"><Input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormField>
+              <FormField label="Expected Date"><Input type="date" value={form.expectedDate} onChange={(e) => setForm((prev) => ({ ...prev, expectedDate: e.target.value }))} /></FormField>
+              <FormField label="Item Description"><Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} required /></FormField>
+              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm((prev) => ({ ...prev, quantity: +e.target.value }))} /></FormField>
+              <FormField label="Unit Price"><Input type="number" value={form.unitPrice} onChange={(e) => setForm((prev) => ({ ...prev, unitPrice: +e.target.value }))} /></FormField>
+              <FormField label="Notes"><Input value={form.notes} onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
@@ -149,14 +149,14 @@ export default function PurchaseOrdersPage() {
       )}
 
       {receiveTarget && (
-        <FormModal title={`Receive against ${String(receiveTarget.poNumber)}`} open onOpenChange={() => setReceiveTarget(null)}>
+        <FormModal title={`Receive against ${String(receiveTarget.poNumber)}`} open={!!receiveTarget} onOpenChange={(open) => { if (!open) setReceiveTarget(null); }}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleReceive(close); }} className="space-y-3">
               <FormField label="Accepted Quantity">
-                <Input type="number" value={receiveForm.acceptedQuantity} onChange={(e) => setReceiveForm({ ...receiveForm, acceptedQuantity: +e.target.value })} required />
+                <Input type="number" value={receiveForm.acceptedQuantity} onChange={(e) => setReceiveForm((prev) => ({ ...prev, acceptedQuantity: +e.target.value }))} required />
               </FormField>
-              <FormField label="Transport Cost"><Input type="number" value={receiveForm.transportCost} onChange={(e) => setReceiveForm({ ...receiveForm, transportCost: +e.target.value })} /></FormField>
-              <FormField label="Loading Cost"><Input type="number" value={receiveForm.loadingCost} onChange={(e) => setReceiveForm({ ...receiveForm, loadingCost: +e.target.value })} /></FormField>
+              <FormField label="Transport Cost"><Input type="number" value={receiveForm.transportCost} onChange={(e) => setReceiveForm((prev) => ({ ...prev, transportCost: +e.target.value }))} /></FormField>
+              <FormField label="Loading Cost"><Input type="number" value={receiveForm.loadingCost} onChange={(e) => setReceiveForm((prev) => ({ ...prev, loadingCost: +e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

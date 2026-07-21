@@ -56,7 +56,7 @@ export default function PayablesPage() {
       </div>
 
       {payTarget && (
-        <FormModal title={`Pay ${String((payTarget.supplier as { name?: string })?.name || "Supplier")}`} open onOpenChange={(o) => { if (!o) setPayTarget(null); }}>
+        <FormModal title={`Pay ${String((payTarget.supplier as { name?: string })?.name || "Supplier")}`} open={!!payTarget} onOpenChange={(o) => { if (!o) setPayTarget(null); }}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handlePay(close); }} className="space-y-3">
               <p className="text-sm">Balance: {formatCurrency(Number(payTarget.balance))}</p>

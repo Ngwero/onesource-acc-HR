@@ -179,7 +179,7 @@ export default function PerformancePage() {
         <FormField label="Employee">
           <Select
             value={form.employeeId}
-            onChange={(e) => setForm({ ...form, employeeId: e.target.value })}
+            onChange={(e) => setForm((prev) => ({ ...prev, employeeId: e.target.value }))}
           >
             <option value="">Select…</option>
             {employees.map((e) => (
@@ -194,14 +194,14 @@ export default function PerformancePage() {
             <Input
               type="date"
               value={form.periodStart}
-              onChange={(e) => setForm({ ...form, periodStart: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, periodStart: e.target.value }))}
             />
           </FormField>
           <FormField label="Period end">
             <Input
               type="date"
               value={form.periodEnd}
-              onChange={(e) => setForm({ ...form, periodEnd: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, periodEnd: e.target.value }))}
             />
           </FormField>
         </div>
@@ -212,20 +212,20 @@ export default function PerformancePage() {
             max={5}
             step={0.1}
             value={form.overallRating}
-            onChange={(e) => setForm({ ...form, overallRating: e.target.value })}
+            onChange={(e) => setForm((prev) => ({ ...prev, overallRating: e.target.value }))}
           />
         </FormField>
         <FormField label="Strengths">
-          <Input value={form.strengths} onChange={(e) => setForm({ ...form, strengths: e.target.value })} />
+          <Input value={form.strengths} onChange={(e) => setForm((prev) => ({ ...prev, strengths: e.target.value }))} />
         </FormField>
         <FormField label="Improvements">
           <Input
             value={form.improvements}
-            onChange={(e) => setForm({ ...form, improvements: e.target.value })}
+            onChange={(e) => setForm((prev) => ({ ...prev, improvements: e.target.value }))}
           />
         </FormField>
         <FormField label="Goals">
-          <Input value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} />
+          <Input value={form.goals} onChange={(e) => setForm((prev) => ({ ...prev, goals: e.target.value }))} />
         </FormField>
         <FormActions onCancel={() => setShow(false)} onSubmit={submit} loading={loading} submitLabel="Create" />
       </FormModal>

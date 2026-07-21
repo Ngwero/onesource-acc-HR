@@ -194,16 +194,16 @@ export default function TrainingPage() {
 
       <FormModal open={showProgram} onOpenChange={setShowProgram} title="New training program">
         <FormField label="Title">
-          <Input value={pForm.title} onChange={(e) => setPForm({ ...pForm, title: e.target.value })} />
+          <Input value={pForm.title} onChange={(e) => setPForm((prev) => ({ ...prev, title: e.target.value }))} />
         </FormField>
         <FormField label="Provider">
-          <Input value={pForm.provider} onChange={(e) => setPForm({ ...pForm, provider: e.target.value })} />
+          <Input value={pForm.provider} onChange={(e) => setPForm((prev) => ({ ...prev, provider: e.target.value }))} />
         </FormField>
         <FormField label="Duration (hours)">
           <Input
             type="number"
             value={pForm.durationHours}
-            onChange={(e) => setPForm({ ...pForm, durationHours: e.target.value })}
+            onChange={(e) => setPForm((prev) => ({ ...prev, durationHours: e.target.value }))}
           />
         </FormField>
         <FormActions onCancel={() => setShowProgram(false)} onSubmit={createProgram} loading={loading} submitLabel="Create" />
@@ -211,7 +211,7 @@ export default function TrainingPage() {
 
       <FormModal open={showEnroll} onOpenChange={setShowEnroll} title="Enroll employee">
         <FormField label="Employee">
-          <Select value={eForm.employeeId} onChange={(e) => setEForm({ ...eForm, employeeId: e.target.value })}>
+          <Select value={eForm.employeeId} onChange={(e) => setEForm((prev) => ({ ...prev, employeeId: e.target.value }))}>
             <option value="">Select…</option>
             {employees.map((e) => (
               <option key={e.id} value={e.id}>{e.fullName}</option>
@@ -219,7 +219,7 @@ export default function TrainingPage() {
           </Select>
         </FormField>
         <FormField label="Program">
-          <Select value={eForm.programId} onChange={(e) => setEForm({ ...eForm, programId: e.target.value })}>
+          <Select value={eForm.programId} onChange={(e) => setEForm((prev) => ({ ...prev, programId: e.target.value }))}>
             <option value="">Select…</option>
             {programs.map((p) => (
               <option key={p.id} value={p.id}>{p.title}</option>
@@ -227,7 +227,7 @@ export default function TrainingPage() {
           </Select>
         </FormField>
         <FormField label="Start date">
-          <Input type="date" value={eForm.startDate} onChange={(e) => setEForm({ ...eForm, startDate: e.target.value })} />
+          <Input type="date" value={eForm.startDate} onChange={(e) => setEForm((prev) => ({ ...prev, startDate: e.target.value }))} />
         </FormField>
         <FormActions onCancel={() => setShowEnroll(false)} onSubmit={enroll} loading={loading} submitLabel="Enroll" />
       </FormModal>

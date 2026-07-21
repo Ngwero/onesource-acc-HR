@@ -270,12 +270,12 @@ export default function RecruitmentPage() {
 
       <FormModal open={showJob} onOpenChange={setShowJob} title="New job opening">
         <FormField label="Title">
-          <Input value={jobForm.title} onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })} />
+          <Input value={jobForm.title} onChange={(e) => setJobForm((prev) => ({ ...prev, title: e.target.value }))} />
         </FormField>
         <FormField label="Department">
           <Select
             value={jobForm.departmentId}
-            onChange={(e) => setJobForm({ ...jobForm, departmentId: e.target.value })}
+            onChange={(e) => setJobForm((prev) => ({ ...prev, departmentId: e.target.value }))}
           >
             <option value="">—</option>
             {departments.map((d) => (
@@ -286,12 +286,12 @@ export default function RecruitmentPage() {
           </Select>
         </FormField>
         <FormField label="Location">
-          <Input value={jobForm.location} onChange={(e) => setJobForm({ ...jobForm, location: e.target.value })} />
+          <Input value={jobForm.location} onChange={(e) => setJobForm((prev) => ({ ...prev, location: e.target.value }))} />
         </FormField>
         <FormField label="Type">
           <Select
             value={jobForm.employmentType}
-            onChange={(e) => setJobForm({ ...jobForm, employmentType: e.target.value })}
+            onChange={(e) => setJobForm((prev) => ({ ...prev, employmentType: e.target.value }))}
           >
             {["PERMANENT", "FIXED_TERM", "PROBATION", "CONSULTANT", "INTERN"].map((t) => (
               <option key={t} value={t}>
@@ -303,7 +303,7 @@ export default function RecruitmentPage() {
         <FormField label="Description">
           <Input
             value={jobForm.description}
-            onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
+            onChange={(e) => setJobForm((prev) => ({ ...prev, description: e.target.value }))}
           />
         </FormField>
         <FormActions onCancel={() => setShowJob(false)} onSubmit={createJob} loading={loading} submitLabel="Create" />
@@ -313,7 +313,7 @@ export default function RecruitmentPage() {
         <FormField label="Job opening">
           <Select
             value={appForm.jobOpeningId}
-            onChange={(e) => setAppForm({ ...appForm, jobOpeningId: e.target.value })}
+            onChange={(e) => setAppForm((prev) => ({ ...prev, jobOpeningId: e.target.value }))}
           >
             <option value="">Select…</option>
             {openings.filter((o) => o.status === "OPEN").map((o) => (
@@ -324,16 +324,16 @@ export default function RecruitmentPage() {
           </Select>
         </FormField>
         <FormField label="Full name">
-          <Input value={appForm.fullName} onChange={(e) => setAppForm({ ...appForm, fullName: e.target.value })} />
+          <Input value={appForm.fullName} onChange={(e) => setAppForm((prev) => ({ ...prev, fullName: e.target.value }))} />
         </FormField>
         <FormField label="Email">
-          <Input value={appForm.email} onChange={(e) => setAppForm({ ...appForm, email: e.target.value })} />
+          <Input value={appForm.email} onChange={(e) => setAppForm((prev) => ({ ...prev, email: e.target.value }))} />
         </FormField>
         <FormField label="Phone">
-          <Input value={appForm.phone} onChange={(e) => setAppForm({ ...appForm, phone: e.target.value })} />
+          <Input value={appForm.phone} onChange={(e) => setAppForm((prev) => ({ ...prev, phone: e.target.value }))} />
         </FormField>
         <FormField label="Source">
-          <Input value={appForm.source} onChange={(e) => setAppForm({ ...appForm, source: e.target.value })} />
+          <Input value={appForm.source} onChange={(e) => setAppForm((prev) => ({ ...prev, source: e.target.value }))} />
         </FormField>
         <FormActions onCancel={() => setShowApp(false)} onSubmit={createApplicant} loading={loading} submitLabel="Add" />
       </FormModal>

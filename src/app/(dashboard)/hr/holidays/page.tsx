@@ -144,20 +144,20 @@ export default function HolidaysPage() {
         <FormField label="Name">
           <Input
             value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
           />
         </FormField>
         <FormField label="Date">
           <Input
             type="date"
             value={form.date}
-            onChange={(e) => setForm({ ...form, date: e.target.value })}
+            onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))}
           />
         </FormField>
         <FormField label="Notes">
           <Input
             value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
           />
         </FormField>
         <FormActions

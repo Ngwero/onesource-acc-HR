@@ -62,24 +62,24 @@ export default function ExpensesPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Expense" open onOpenChange={setShowForm}>
+        <FormModal title="New Expense" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Category">
-                <Select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })} required>
+                <Select value={form.categoryId} onChange={(e) => setForm((prev) => ({ ...prev, categoryId: e.target.value }))} required>
                   <option value="">Select category</option>
                   {categories.map((c) => <option key={String(c.id)} value={String(c.id)}>{String(c.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Amount (UGX)"><Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: +e.target.value })} required /></FormField>
-              <FormField label="Date"><Input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></FormField>
+              <FormField label="Amount (UGX)"><Input type="number" value={form.amount} onChange={(e) => setForm((prev) => ({ ...prev, amount: +e.target.value }))} required /></FormField>
+              <FormField label="Date"><Input type="date" value={form.date} onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))} /></FormField>
               <FormField label="Supplier (optional)">
-                <Select value={form.supplierId} onChange={(e) => setForm({ ...form, supplierId: e.target.value })}>
+                <Select value={form.supplierId} onChange={(e) => setForm((prev) => ({ ...prev, supplierId: e.target.value }))}>
                   <option value="">None</option>
                   {suppliers.map((s) => <option key={String(s.id)} value={String(s.id)}>{String(s.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></FormField>
+              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

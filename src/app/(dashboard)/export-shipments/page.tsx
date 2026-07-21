@@ -70,34 +70,34 @@ export default function ExportShipmentsPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Export Shipment" open onOpenChange={setShowForm}>
+        <FormModal title="New Export Shipment" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Customer">
-                <Select value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} required>
+                <Select value={form.customerId} onChange={(e) => setForm((prev) => ({ ...prev, customerId: e.target.value }))} required>
                   <option value="">Select</option>
                   {customers.map((c) => <option key={String(c.id)} value={String(c.id)}>{String(c.name)}</option>)}
                 </Select>
               </FormField>
               <FormField label="Produce">
-                <Select value={form.produceId} onChange={(e) => setForm({ ...form, produceId: e.target.value })} required>
+                <Select value={form.produceId} onChange={(e) => setForm((prev) => ({ ...prev, produceId: e.target.value }))} required>
                   <option value="">Select</option>
                   {produce.map((p) => <option key={String(p.id)} value={String(p.id)}>{String(p.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: +e.target.value })} required /></FormField>
-              <FormField label="Destination Country"><Input value={form.destinationCountry} onChange={(e) => setForm({ ...form, destinationCountry: e.target.value })} required /></FormField>
-              <FormField label="City"><Input value={form.destinationCity} onChange={(e) => setForm({ ...form, destinationCity: e.target.value })} /></FormField>
+              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm((prev) => ({ ...prev, quantity: +e.target.value }))} required /></FormField>
+              <FormField label="Destination Country"><Input value={form.destinationCountry} onChange={(e) => setForm((prev) => ({ ...prev, destinationCountry: e.target.value }))} required /></FormField>
+              <FormField label="City"><Input value={form.destinationCity} onChange={(e) => setForm((prev) => ({ ...prev, destinationCity: e.target.value }))} /></FormField>
               <FormField label="Freight Method">
-                <Select value={form.freightMethod} onChange={(e) => setForm({ ...form, freightMethod: e.target.value })}>
+                <Select value={form.freightMethod} onChange={(e) => setForm((prev) => ({ ...prev, freightMethod: e.target.value }))}>
                   <option value="SEA">Sea</option><option value="AIR">Air</option><option value="ROAD">Road</option>
                 </Select>
               </FormField>
-              <FormField label="Container #"><Input value={form.containerNumber} onChange={(e) => setForm({ ...form, containerNumber: e.target.value })} /></FormField>
-              <FormField label="Bill of Lading"><Input value={form.billOfLading} onChange={(e) => setForm({ ...form, billOfLading: e.target.value })} /></FormField>
-              <FormField label="Expected Revenue (UGX)"><Input type="number" value={form.expectedRevenue} onChange={(e) => setForm({ ...form, expectedRevenue: +e.target.value })} /></FormField>
-              <FormField label="Freight Cost"><Input type="number" value={form.costFreight} onChange={(e) => setForm({ ...form, costFreight: +e.target.value })} /></FormField>
-              <FormField label="Packaging Cost"><Input type="number" value={form.costPackaging} onChange={(e) => setForm({ ...form, costPackaging: +e.target.value })} /></FormField>
+              <FormField label="Container #"><Input value={form.containerNumber} onChange={(e) => setForm((prev) => ({ ...prev, containerNumber: e.target.value }))} /></FormField>
+              <FormField label="Bill of Lading"><Input value={form.billOfLading} onChange={(e) => setForm((prev) => ({ ...prev, billOfLading: e.target.value }))} /></FormField>
+              <FormField label="Expected Revenue (UGX)"><Input type="number" value={form.expectedRevenue} onChange={(e) => setForm((prev) => ({ ...prev, expectedRevenue: +e.target.value }))} /></FormField>
+              <FormField label="Freight Cost"><Input type="number" value={form.costFreight} onChange={(e) => setForm((prev) => ({ ...prev, costFreight: +e.target.value }))} /></FormField>
+              <FormField label="Packaging Cost"><Input type="number" value={form.costPackaging} onChange={(e) => setForm((prev) => ({ ...prev, costPackaging: +e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

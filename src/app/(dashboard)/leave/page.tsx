@@ -191,7 +191,7 @@ export default function LeavePage() {
       </section>
 
       {show && (
-        <FormModal title="Request leave" open onOpenChange={setShow}>
+        <FormModal title="Request leave" open={show} onOpenChange={setShow}>
           {({ close }) => (
             <form
               className="space-y-3"
@@ -204,7 +204,7 @@ export default function LeavePage() {
                 <Select
                   required
                   value={form.employeeId}
-                  onChange={(e) => setForm({ ...form, employeeId: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, employeeId: e.target.value }))}
                 >
                   <option value="">Select…</option>
                   {employees.map((e) => (
@@ -217,7 +217,7 @@ export default function LeavePage() {
               <FormField label="Type">
                 <Select
                   value={form.leaveType}
-                  onChange={(e) => setForm({ ...form, leaveType: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, leaveType: e.target.value }))}
                 >
                   {[
                     "ANNUAL",
@@ -240,7 +240,7 @@ export default function LeavePage() {
                     type="date"
                     required
                     value={form.startDate}
-                    onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, startDate: e.target.value }))}
                   />
                 </FormField>
                 <FormField label="End">
@@ -248,14 +248,14 @@ export default function LeavePage() {
                     type="date"
                     required
                     value={form.endDate}
-                    onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, endDate: e.target.value }))}
                   />
                 </FormField>
               </div>
               <FormField label="Reason">
                 <Input
                   value={form.reason}
-                  onChange={(e) => setForm({ ...form, reason: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, reason: e.target.value }))}
                 />
               </FormField>
               <FormActions onCancel={close} loading={loading} submitLabel="Submit request" />

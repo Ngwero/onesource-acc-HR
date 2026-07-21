@@ -111,21 +111,21 @@ export default function LedgerPage() {
       } />
 
       {showForm && (
-        <FormModal title="Manual Journal Entry" open onOpenChange={setShowForm}>
+        <FormModal title="Manual Journal Entry" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleJournal(close); }} className="space-y-3">
-              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required /></FormField>
-              <FormField label="Reference"><Input value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} /></FormField>
+              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} required /></FormField>
+              <FormField label="Reference"><Input value={form.reference} onChange={(e) => setForm((prev) => ({ ...prev, reference: e.target.value }))} /></FormField>
               <FormField label="Debit Account Code">
-                <Input list="accounts" value={form.debitAccountCode} onChange={(e) => setForm({ ...form, debitAccountCode: e.target.value })} required placeholder="e.g. 5200" />
+                <Input list="accounts" value={form.debitAccountCode} onChange={(e) => setForm((prev) => ({ ...prev, debitAccountCode: e.target.value }))} required placeholder="e.g. 5200" />
               </FormField>
               <FormField label="Credit Account Code">
-                <Input list="accounts" value={form.creditAccountCode} onChange={(e) => setForm({ ...form, creditAccountCode: e.target.value })} required placeholder="e.g. 1100" />
+                <Input list="accounts" value={form.creditAccountCode} onChange={(e) => setForm((prev) => ({ ...prev, creditAccountCode: e.target.value }))} required placeholder="e.g. 1100" />
               </FormField>
               <datalist id="accounts">
                 {accounts.filter((a) => a.isActive !== false).map((a) => <option key={String(a.id)} value={String(a.code)}>{String(a.name)}</option>)}
               </datalist>
-              <FormField label="Amount"><Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: +e.target.value })} required /></FormField>
+              <FormField label="Amount"><Input type="number" value={form.amount} onChange={(e) => setForm((prev) => ({ ...prev, amount: +e.target.value }))} required /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
@@ -133,13 +133,13 @@ export default function LedgerPage() {
       )}
 
       {showCoa && (
-        <FormModal title="Add Chart of Account" open onOpenChange={setShowCoa}>
+        <FormModal title="Add Chart of Account" open={showCoa} onOpenChange={setShowCoa}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCoaCreate(close); }} className="space-y-3">
-              <FormField label="Code"><Input value={coaForm.code} onChange={(e) => setCoaForm({ ...coaForm, code: e.target.value })} required /></FormField>
-              <FormField label="Name"><Input value={coaForm.name} onChange={(e) => setCoaForm({ ...coaForm, name: e.target.value })} required /></FormField>
+              <FormField label="Code"><Input value={coaForm.code} onChange={(e) => setCoaForm((prev) => ({ ...prev, code: e.target.value }))} required /></FormField>
+              <FormField label="Name"><Input value={coaForm.name} onChange={(e) => setCoaForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
               <FormField label="Type">
-                <Select value={coaForm.accountType} onChange={(e) => setCoaForm({ ...coaForm, accountType: e.target.value })}>
+                <Select value={coaForm.accountType} onChange={(e) => setCoaForm((prev) => ({ ...prev, accountType: e.target.value }))}>
                   {["ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"].map((t) => <option key={t} value={t}>{t}</option>)}
                 </Select>
               </FormField>

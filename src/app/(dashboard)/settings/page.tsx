@@ -76,7 +76,7 @@ export default function SettingsPage() {
     else alert(res.message);
   };
 
-  const update = (key: string, value: string | number) => setSettings({ ...settings, [key]: value });
+  const update = (key: string, value: string | number) => setSettings((prev) => ({ ...prev, [key]: value }));
 
   return (
     <div>
@@ -236,20 +236,20 @@ export default function SettingsPage() {
       </Card>
 
       {showMaster && (
-        <FormModal title="Add Master Data" open onOpenChange={setShowMaster}>
+        <FormModal title="Add Master Data" open={showMaster} onOpenChange={setShowMaster}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleMasterCreate(close); }} className="space-y-3">
               <FormField label="Type">
-                <Select value={masterForm.type} onChange={(e) => setMasterForm({ ...masterForm, type: e.target.value as MasterType })}>
+                <Select value={masterForm.type} onChange={(e) => setMasterForm((prev) => ({ ...prev, type: e.target.value as MasterType }))}>
                   <option value="unit">Unit of Measure</option>
                   <option value="location">Stock Location</option>
                   <option value="category">Expense Category</option>
                 </Select>
               </FormField>
-              <FormField label="Code"><Input value={masterForm.code} onChange={(e) => setMasterForm({ ...masterForm, code: e.target.value })} required /></FormField>
-              <FormField label="Name"><Input value={masterForm.name} onChange={(e) => setMasterForm({ ...masterForm, name: e.target.value })} required /></FormField>
+              <FormField label="Code"><Input value={masterForm.code} onChange={(e) => setMasterForm((prev) => ({ ...prev, code: e.target.value }))} required /></FormField>
+              <FormField label="Name"><Input value={masterForm.name} onChange={(e) => setMasterForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
               {masterForm.type === "location" && (
-                <FormField label="Description"><Input value={masterForm.description} onChange={(e) => setMasterForm({ ...masterForm, description: e.target.value })} /></FormField>
+                <FormField label="Description"><Input value={masterForm.description} onChange={(e) => setMasterForm((prev) => ({ ...prev, description: e.target.value }))} /></FormField>
               )}
               <FormActions onCancel={close} loading={loading} />
             </form>
@@ -258,17 +258,17 @@ export default function SettingsPage() {
       )}
 
       {showRate && (
-        <FormModal title="Add Exchange Rate" open onOpenChange={setShowRate}>
+        <FormModal title="Add Exchange Rate" open={showRate} onOpenChange={setShowRate}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleRateCreate(close); }} className="space-y-3">
               <FormField label="Currency">
-                <Select value={rateForm.currencyId} onChange={(e) => setRateForm({ ...rateForm, currencyId: e.target.value })} required>
+                <Select value={rateForm.currencyId} onChange={(e) => setRateForm((prev) => ({ ...prev, currencyId: e.target.value }))} required>
                   <option value="">Select currency</option>
                   {currencies.map((c) => <option key={String(c.id)} value={String(c.id)}>{String(c.code)} — {String(c.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Rate"><Input type="number" step="0.000001" value={rateForm.rate} onChange={(e) => setRateForm({ ...rateForm, rate: +e.target.value })} required /></FormField>
-              <FormField label="Effective Date"><Input type="date" value={rateForm.effectiveDate} onChange={(e) => setRateForm({ ...rateForm, effectiveDate: e.target.value })} /></FormField>
+              <FormField label="Rate"><Input type="number" step="0.000001" value={rateForm.rate} onChange={(e) => setRateForm((prev) => ({ ...prev, rate: +e.target.value }))} required /></FormField>
+              <FormField label="Effective Date"><Input type="date" value={rateForm.effectiveDate} onChange={(e) => setRateForm((prev) => ({ ...prev, effectiveDate: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

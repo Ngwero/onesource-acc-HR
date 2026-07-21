@@ -130,7 +130,7 @@ export default function DisciplinaryPage() {
 
       <FormModal open={show} onOpenChange={setShow} title="Record disciplinary action">
         <FormField label="Employee">
-          <Select value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })}>
+          <Select value={form.employeeId} onChange={(e) => setForm((prev) => ({ ...prev, employeeId: e.target.value }))}>
             <option value="">Select…</option>
             {employees.map((e) => (
               <option key={e.id} value={e.id}>{e.fullName}</option>
@@ -138,20 +138,20 @@ export default function DisciplinaryPage() {
           </Select>
         </FormField>
         <FormField label="Type">
-          <Select value={form.actionType} onChange={(e) => setForm({ ...form, actionType: e.target.value })}>
+          <Select value={form.actionType} onChange={(e) => setForm((prev) => ({ ...prev, actionType: e.target.value }))}>
             {TYPES.map((t) => (
               <option key={t} value={t}>{t.replace(/_/g, " ")}</option>
             ))}
           </Select>
         </FormField>
         <FormField label="Title">
-          <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <Input value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} />
         </FormField>
         <FormField label="Description">
-          <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          <Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
         </FormField>
         <FormField label="Date">
-          <Input type="date" value={form.actionDate} onChange={(e) => setForm({ ...form, actionDate: e.target.value })} />
+          <Input type="date" value={form.actionDate} onChange={(e) => setForm((prev) => ({ ...prev, actionDate: e.target.value }))} />
         </FormField>
         <FormActions onCancel={() => setShow(false)} onSubmit={submit} loading={loading} submitLabel="Save" />
       </FormModal>

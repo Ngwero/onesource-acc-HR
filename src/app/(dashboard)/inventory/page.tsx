@@ -87,30 +87,30 @@ export default function InventoryPage() {
       </div>
 
       {showAdjust && (
-        <FormModal title="Stock Adjustment" open onOpenChange={setShowAdjust}>
+        <FormModal title="Stock Adjustment" open={showAdjust} onOpenChange={setShowAdjust}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleAdjust(close); }} className="space-y-3">
               <FormField label="Produce">
-                <Select value={form.produceId} onChange={(e) => setForm({ ...form, produceId: e.target.value })} required>
+                <Select value={form.produceId} onChange={(e) => setForm((prev) => ({ ...prev, produceId: e.target.value }))} required>
                   <option value="">Select</option>
                   {produce.map((p) => <option key={String(p.id)} value={String(p.id)}>{String(p.name)}</option>)}
                 </Select>
               </FormField>
               <FormField label="Location">
-                <Select value={form.locationId} onChange={(e) => setForm({ ...form, locationId: e.target.value })} required>
+                <Select value={form.locationId} onChange={(e) => setForm((prev) => ({ ...prev, locationId: e.target.value }))} required>
                   <option value="">Select</option>
                   {locations.map((l) => <option key={String(l.id)} value={String(l.id)}>{String(l.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: +e.target.value })} required /></FormField>
+              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm((prev) => ({ ...prev, quantity: +e.target.value }))} required /></FormField>
               <FormField label="Type">
-                <Select value={form.movementType} onChange={(e) => setForm({ ...form, movementType: e.target.value })}>
+                <Select value={form.movementType} onChange={(e) => setForm((prev) => ({ ...prev, movementType: e.target.value }))}>
                   <option value="ADJUSTMENT">Adjustment</option>
                   <option value="DAMAGE">Damage</option>
                   <option value="TRANSFER">Transfer</option>
                 </Select>
               </FormField>
-              <FormField label="Reason"><Input value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} /></FormField>
+              <FormField label="Reason"><Input value={form.reason} onChange={(e) => setForm((prev) => ({ ...prev, reason: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

@@ -60,7 +60,7 @@ export default function InvoicesPage() {
       } />
 
       {showForm && (
-        <FormModal title="Create Invoice from Sale" open onOpenChange={setShowForm}>
+        <FormModal title="Create Invoice from Sale" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Select Sale">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, type Dispatch, type SetStateAction } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataTable, StatusBadge, formatCurrency } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
@@ -66,7 +66,7 @@ function ProduceFormFields({
   codeDisabled,
 }: {
   form: ProduceForm;
-  setForm: (form: ProduceForm) => void;
+  setForm: Dispatch<SetStateAction<ProduceForm>>;
   units: Record<string, unknown>[];
   codeDisabled?: boolean;
 }) {
@@ -76,22 +76,22 @@ function ProduceFormFields({
         <FormField label="Code">
           <Input
             value={form.code}
-            onChange={(e) => setForm({ ...form, code: e.target.value })}
+            onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))}
             required
             disabled={codeDisabled}
             placeholder="PRD-001"
           />
         </FormField>
         <FormField label="Name">
-          <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          <Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required />
         </FormField>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label="Category">
-          <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required placeholder="Fruits, Grains, etc." />
+          <Input value={form.category} onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))} required placeholder="Fruits, Grains, etc." />
         </FormField>
         <FormField label="Unit of Measure">
-          <Select value={form.unitOfMeasureId} onChange={(e) => setForm({ ...form, unitOfMeasureId: e.target.value })} required>
+          <Select value={form.unitOfMeasureId} onChange={(e) => setForm((prev) => ({ ...prev, unitOfMeasureId: e.target.value }))} required>
             <option value="">Select unit</option>
             {units.map((u) => (
               <option key={String(u.id)} value={String(u.id)}>{String(u.name)} ({String(u.code)})</option>
@@ -100,34 +100,34 @@ function ProduceFormFields({
         </FormField>
       </div>
       <FormField label="Grade">
-        <Select value={form.grade} onChange={(e) => setForm({ ...form, grade: e.target.value })}>
+        <Select value={form.grade} onChange={(e) => setForm((prev) => ({ ...prev, grade: e.target.value }))}>
           {GRADES.map((g) => <option key={g} value={g}>{g.replace("_", " ")}</option>)}
         </Select>
       </FormField>
       <div className="grid gap-3 sm:grid-cols-3">
         <FormField label="Buying Price (UGX)">
-          <Input type="number" min={0} value={form.buyingPrice} onChange={(e) => setForm({ ...form, buyingPrice: +e.target.value })} required />
+          <Input type="number" min={0} value={form.buyingPrice} onChange={(e) => setForm((prev) => ({ ...prev, buyingPrice: +e.target.value }))} required />
         </FormField>
         <FormField label="Selling Price (UGX)">
-          <Input type="number" min={0} value={form.sellingPrice} onChange={(e) => setForm({ ...form, sellingPrice: +e.target.value })} required />
+          <Input type="number" min={0} value={form.sellingPrice} onChange={(e) => setForm((prev) => ({ ...prev, sellingPrice: +e.target.value }))} required />
         </FormField>
         <FormField label="Export Price">
-          <Input type="number" min={0} step="0.01" value={form.exportPrice} onChange={(e) => setForm({ ...form, exportPrice: +e.target.value })} />
+          <Input type="number" min={0} step="0.01" value={form.exportPrice} onChange={(e) => setForm((prev) => ({ ...prev, exportPrice: +e.target.value }))} />
         </FormField>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <FormField label="Shelf Life (days)">
-          <Input type="number" min={0} value={form.shelfLifeDays} onChange={(e) => setForm({ ...form, shelfLifeDays: e.target.value === "" ? "" : +e.target.value })} />
+          <Input type="number" min={0} value={form.shelfLifeDays} onChange={(e) => setForm((prev) => ({ ...prev, shelfLifeDays: e.target.value === "" ? "" : +e.target.value }))} />
         </FormField>
         <FormField label="Minimum Stock Level">
-          <Input type="number" min={0} step="0.001" value={form.minimumStockLevel} onChange={(e) => setForm({ ...form, minimumStockLevel: +e.target.value })} />
+          <Input type="number" min={0} step="0.001" value={form.minimumStockLevel} onChange={(e) => setForm((prev) => ({ ...prev, minimumStockLevel: +e.target.value }))} />
         </FormField>
       </div>
       <FormField label="Packaging Type">
-        <Input value={form.packagingType} onChange={(e) => setForm({ ...form, packagingType: e.target.value })} placeholder="Crates, bags, etc." />
+        <Input value={form.packagingType} onChange={(e) => setForm((prev) => ({ ...prev, packagingType: e.target.value }))} placeholder="Crates, bags, etc." />
       </FormField>
       <FormField label="Storage Requirements">
-        <Input value={form.storageRequirements} onChange={(e) => setForm({ ...form, storageRequirements: e.target.value })} placeholder="Cold storage, dry room, etc." />
+        <Input value={form.storageRequirements} onChange={(e) => setForm((prev) => ({ ...prev, storageRequirements: e.target.value }))} placeholder="Cold storage, dry room, etc." />
       </FormField>
     </>
   );
@@ -258,7 +258,7 @@ export default function ProducePage() {
       )}
 
       {showCreate && (
-        <FormModal title="Add Produce" open onOpenChange={setShowCreate}>
+        <FormModal title="Add Produce" open={showCreate} onOpenChange={setShowCreate}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <ProduceFormFields form={createForm} setForm={setCreateForm} units={units} />
@@ -269,7 +269,7 @@ export default function ProducePage() {
       )}
 
       {editingId && (
-        <FormModal title="Edit Produce" open onOpenChange={(open) => { if (!open) setEditingId(null); }}>
+        <FormModal title="Edit Produce" open={!!editingId} onOpenChange={(open) => { if (!open) setEditingId(null); }}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleUpdate(close); }} className="space-y-3">
               <ProduceFormFields form={editForm} setForm={setEditForm} units={units} codeDisabled />

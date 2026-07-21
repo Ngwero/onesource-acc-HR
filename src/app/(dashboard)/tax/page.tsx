@@ -74,13 +74,13 @@ export default function TaxPage() {
       </Card>
 
       {showForm && (
-        <FormModal title="New Tax Code" open onOpenChange={setShowForm}>
+        <FormModal title="New Tax Code" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
-              <FormField label="Code"><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} required placeholder="VAT18" /></FormField>
-              <FormField label="Name"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="VAT 18%" /></FormField>
-              <FormField label="Rate (%)"><Input type="number" step="0.01" value={form.rate} onChange={(e) => setForm({ ...form, rate: +e.target.value })} required /></FormField>
-              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></FormField>
+              <FormField label="Code"><Input value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} required placeholder="VAT18" /></FormField>
+              <FormField label="Name"><Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required placeholder="VAT 18%" /></FormField>
+              <FormField label="Rate (%)"><Input type="number" step="0.01" value={form.rate} onChange={(e) => setForm((prev) => ({ ...prev, rate: +e.target.value }))} required /></FormField>
+              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

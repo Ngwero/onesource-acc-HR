@@ -158,7 +158,7 @@ export default function ContractsPage() {
 
       <FormModal open={show} onOpenChange={setShow} title="New employment contract">
         <FormField label="Employee">
-          <Select value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })}>
+          <Select value={form.employeeId} onChange={(e) => setForm((prev) => ({ ...prev, employeeId: e.target.value }))}>
             <option value="">Select…</option>
             {employees.map((e) => (
               <option key={e.id} value={e.id}>{e.fullName}</option>
@@ -166,25 +166,25 @@ export default function ContractsPage() {
           </Select>
         </FormField>
         <FormField label="Type">
-          <Select value={form.contractType} onChange={(e) => setForm({ ...form, contractType: e.target.value })}>
+          <Select value={form.contractType} onChange={(e) => setForm((prev) => ({ ...prev, contractType: e.target.value }))}>
             {["PERMANENT", "FIXED_TERM", "PROBATION", "CONSULTANT", "INTERN"].map((t) => (
               <option key={t} value={t}>{t.replace(/_/g, " ")}</option>
             ))}
           </Select>
         </FormField>
         <FormField label="Title">
-          <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <Input value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} />
         </FormField>
         <div className="grid grid-cols-2 gap-3">
           <FormField label="Start">
-            <Input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
+            <Input type="date" value={form.startDate} onChange={(e) => setForm((prev) => ({ ...prev, startDate: e.target.value }))} />
           </FormField>
           <FormField label="End (optional)">
-            <Input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
+            <Input type="date" value={form.endDate} onChange={(e) => setForm((prev) => ({ ...prev, endDate: e.target.value }))} />
           </FormField>
         </div>
         <FormField label="Salary">
-          <Input type="number" value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} />
+          <Input type="number" value={form.salary} onChange={(e) => setForm((prev) => ({ ...prev, salary: e.target.value }))} />
         </FormField>
         <FormActions onCancel={() => setShow(false)} onSubmit={submit} loading={loading} submitLabel="Create" />
       </FormModal>

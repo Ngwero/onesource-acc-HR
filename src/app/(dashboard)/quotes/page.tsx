@@ -61,21 +61,21 @@ export default function QuotesPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Quote" open onOpenChange={setShowForm}>
+        <FormModal title="New Quote" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Customer">
-                <Select value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} required>
+                <Select value={form.customerId} onChange={(e) => setForm((prev) => ({ ...prev, customerId: e.target.value }))} required>
                   <option value="">Select customer</option>
                   {customers.map((c) => <option key={String(c.id)} value={String(c.id)}>{String(c.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Expiry Date"><Input type="date" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} required /></FormField>
-              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required /></FormField>
-              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: +e.target.value })} /></FormField>
-              <FormField label="Unit Price"><Input type="number" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: +e.target.value })} /></FormField>
+              <FormField label="Expiry Date"><Input type="date" value={form.expiryDate} onChange={(e) => setForm((prev) => ({ ...prev, expiryDate: e.target.value }))} required /></FormField>
+              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} required /></FormField>
+              <FormField label="Quantity"><Input type="number" value={form.quantity} onChange={(e) => setForm((prev) => ({ ...prev, quantity: +e.target.value }))} /></FormField>
+              <FormField label="Unit Price"><Input type="number" value={form.unitPrice} onChange={(e) => setForm((prev) => ({ ...prev, unitPrice: +e.target.value }))} /></FormField>
               <FormField label="Tax Code">
-                <Select value={form.taxCodeId} onChange={(e) => setForm({ ...form, taxCodeId: e.target.value })}>
+                <Select value={form.taxCodeId} onChange={(e) => setForm((prev) => ({ ...prev, taxCodeId: e.target.value }))}>
                   <option value="">No tax</option>
                   {taxCodes.map((t) => <option key={String(t.id)} value={String(t.id)}>{String(t.name)}</option>)}
                 </Select>

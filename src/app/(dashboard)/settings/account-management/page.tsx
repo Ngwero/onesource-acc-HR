@@ -607,7 +607,7 @@ export default function AccountManagementPage() {
       )}
 
       {showCreate && (
-        <FormModal title="Add user" open onOpenChange={setShowCreate}>
+        <FormModal title="Add user" open={showCreate} onOpenChange={setShowCreate}>
           {({ close }) => (
             <form
               onSubmit={(e) => {
@@ -619,7 +619,7 @@ export default function AccountManagementPage() {
               <FormField label="Full name">
                 <Input
                   value={createForm.fullName}
-                  onChange={(e) => setCreateForm({ ...createForm, fullName: e.target.value })}
+                  onChange={(e) => setCreateForm((prev) => ({ ...prev, fullName: e.target.value }))}
                   required
                 />
               </FormField>
@@ -627,14 +627,14 @@ export default function AccountManagementPage() {
                 <Input
                   type="email"
                   value={createForm.email}
-                  onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                  onChange={(e) => setCreateForm((prev) => ({ ...prev, email: e.target.value }))}
                   required
                 />
               </FormField>
               <FormField label="Phone">
                 <Input
                   value={createForm.phone}
-                  onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                  onChange={(e) => setCreateForm((prev) => ({ ...prev, phone: e.target.value }))}
                 />
               </FormField>
               <p className="rounded-xl bg-[#F3F8F0] px-3 py-2.5 text-xs text-slate-600">
@@ -645,7 +645,7 @@ export default function AccountManagementPage() {
                 <Select
                   value={createForm.role}
                   onChange={(e) =>
-                    setCreateForm({ ...createForm, role: e.target.value as UserRole })
+                    setCreateForm((prev) => ({ ...prev, role: e.target.value as UserRole }))
                   }
                 >
                   {assignableRoles.map((r) => (
@@ -662,7 +662,7 @@ export default function AccountManagementPage() {
       )}
 
       {showEdit && (
-        <FormModal title="Edit user" open onOpenChange={setShowEdit}>
+        <FormModal title="Edit user" open={showEdit} onOpenChange={setShowEdit}>
           {({ close }) => (
             <form
               onSubmit={(e) => {
@@ -674,21 +674,21 @@ export default function AccountManagementPage() {
               <FormField label="Full name">
                 <Input
                   value={editForm.fullName}
-                  onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, fullName: e.target.value }))}
                   required
                 />
               </FormField>
               <FormField label="Phone">
                 <Input
                   value={editForm.phone}
-                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, phone: e.target.value }))}
                 />
               </FormField>
               <FormField label="Role">
                 <Select
                   value={editForm.role}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, role: e.target.value as UserRole })
+                    setEditForm((prev) => ({ ...prev, role: e.target.value as UserRole }))
                   }
                 >
                   {assignableRoles.map((r) => (
@@ -701,7 +701,7 @@ export default function AccountManagementPage() {
               <FormField label="Status">
                 <Select
                   value={editForm.status}
-                  onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, status: e.target.value }))}
                 >
                   <option value="ACTIVE">Active</option>
                   <option value="INACTIVE">Inactive</option>
@@ -714,7 +714,7 @@ export default function AccountManagementPage() {
       )}
 
       {showReset && (
-        <FormModal title={`Reset password — ${resetForm.name}`} open onOpenChange={setShowReset}>
+        <FormModal title={`Reset password — ${resetForm.name}`} open={showReset} onOpenChange={setShowReset}>
           {({ close }) => (
             <form
               onSubmit={(e) => {
@@ -727,7 +727,7 @@ export default function AccountManagementPage() {
                 <Input
                   type="password"
                   value={resetForm.password}
-                  onChange={(e) => setResetForm({ ...resetForm, password: e.target.value })}
+                  onChange={(e) => setResetForm((prev) => ({ ...prev, password: e.target.value }))}
                   required
                 />
               </FormField>

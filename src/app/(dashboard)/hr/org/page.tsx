@@ -142,7 +142,7 @@ export default function OrgChartPage() {
 
       <FormModal open={show} onOpenChange={setShow} title="Set reporting manager">
         <FormField label="Employee">
-          <Select value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })}>
+          <Select value={form.employeeId} onChange={(e) => setForm((prev) => ({ ...prev, employeeId: e.target.value }))}>
             <option value="">Select…</option>
             {employees.map((e) => (
               <option key={e.id} value={e.id}>{e.fullName}</option>
@@ -150,7 +150,7 @@ export default function OrgChartPage() {
           </Select>
         </FormField>
         <FormField label="Reports to">
-          <Select value={form.reportsToId} onChange={(e) => setForm({ ...form, reportsToId: e.target.value })}>
+          <Select value={form.reportsToId} onChange={(e) => setForm((prev) => ({ ...prev, reportsToId: e.target.value }))}>
             <option value="">None (top level)</option>
             {employees
               .filter((e) => e.id !== form.employeeId)

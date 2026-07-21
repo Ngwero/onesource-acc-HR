@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, type Dispatch, type SetStateAction } from "react";
 import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataTable, StatusBadge, formatCurrency } from "@/components/ui/data-table";
@@ -62,24 +62,24 @@ export default function SuppliersPage() {
     else alert(res.message);
   };
 
-  const FormFields = ({ form, setForm, codeDisabled }: { form: SupplierForm; setForm: (f: SupplierForm) => void; codeDisabled?: boolean }) => (
+  const FormFields = ({ form, setForm, codeDisabled }: { form: SupplierForm; setForm: Dispatch<SetStateAction<SupplierForm>>; codeDisabled?: boolean }) => (
     <>
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label="Code"><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} required disabled={codeDisabled} /></FormField>
-        <FormField label="Name"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></FormField>
+        <FormField label="Code"><Input value={form.code} onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))} required disabled={codeDisabled} /></FormField>
+        <FormField label="Name"><Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
       </div>
-      <FormField label="Contact Person"><Input value={form.contactPerson} onChange={(e) => setForm({ ...form, contactPerson: e.target.value })} /></FormField>
+      <FormField label="Contact Person"><Input value={form.contactPerson} onChange={(e) => setForm((prev) => ({ ...prev, contactPerson: e.target.value }))} /></FormField>
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label="Phone"><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></FormField>
-        <FormField label="Email"><Input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></FormField>
+        <FormField label="Phone"><Input value={form.phone} onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))} /></FormField>
+        <FormField label="Email"><Input value={form.email} onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} /></FormField>
       </div>
-      <FormField label="Location"><Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} /></FormField>
+      <FormField label="Location"><Input value={form.location} onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))} /></FormField>
       <FormField label="Type">
-        <Select value={form.supplierType} onChange={(e) => setForm({ ...form, supplierType: e.target.value })}>
+        <Select value={form.supplierType} onChange={(e) => setForm((prev) => ({ ...prev, supplierType: e.target.value }))}>
           {["FARMER", "COOPERATIVE", "AGENT", "COMPANY"].map((t) => <option key={t} value={t}>{t}</option>)}
         </Select>
       </FormField>
-      <FormField label="Payment Terms (days)"><Input type="number" value={form.paymentTerms} onChange={(e) => setForm({ ...form, paymentTerms: +e.target.value })} /></FormField>
+      <FormField label="Payment Terms (days)"><Input type="number" value={form.paymentTerms} onChange={(e) => setForm((prev) => ({ ...prev, paymentTerms: +e.target.value }))} /></FormField>
     </>
   );
 
@@ -109,7 +109,7 @@ export default function SuppliersPage() {
       )}
 
       {showCreate && (
-        <FormModal title="Add Supplier" open onOpenChange={setShowCreate}>
+        <FormModal title="Add Supplier" open={showCreate} onOpenChange={setShowCreate}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); save("/api/suppliers", "POST", createForm, close); }} className="space-y-3">
               <FormFields form={createForm} setForm={setCreateForm} />
@@ -120,7 +120,7 @@ export default function SuppliersPage() {
       )}
 
       {editingId && (
-        <FormModal title="Edit Supplier" open onOpenChange={(o) => { if (!o) setEditingId(null); }}>
+        <FormModal title="Edit Supplier" open={!!editingId} onOpenChange={(o) => { if (!o) setEditingId(null); }}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); save(`/api/suppliers/${editingId}`, "PUT", editForm, close); }} className="space-y-3">
               <FormFields form={editForm} setForm={setEditForm} codeDisabled />

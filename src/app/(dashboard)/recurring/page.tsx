@@ -76,42 +76,42 @@ export default function RecurringPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Recurring Template" open onOpenChange={setShowForm}>
+        <FormModal title="New Recurring Template" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
-              <FormField label="Name"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></FormField>
+              <FormField label="Name"><Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
               <FormField label="Type">
-                <Select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+                <Select value={form.type} onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}>
                   <option value="INVOICE">Repeating Invoice</option>
                   <option value="BILL">Repeating Bill</option>
                 </Select>
               </FormField>
               <FormField label="Frequency">
-                <Select value={form.frequency} onChange={(e) => setForm({ ...form, frequency: e.target.value })}>
+                <Select value={form.frequency} onChange={(e) => setForm((prev) => ({ ...prev, frequency: e.target.value }))}>
                   <option value="WEEKLY">Weekly</option>
                   <option value="MONTHLY">Monthly</option>
                   <option value="QUARTERLY">Quarterly</option>
                   <option value="YEARLY">Yearly</option>
                 </Select>
               </FormField>
-              <FormField label="Next Run Date"><Input type="date" value={form.nextRunDate} onChange={(e) => setForm({ ...form, nextRunDate: e.target.value })} required /></FormField>
-              <FormField label="Amount"><Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: +e.target.value })} required /></FormField>
+              <FormField label="Next Run Date"><Input type="date" value={form.nextRunDate} onChange={(e) => setForm((prev) => ({ ...prev, nextRunDate: e.target.value }))} required /></FormField>
+              <FormField label="Amount"><Input type="number" value={form.amount} onChange={(e) => setForm((prev) => ({ ...prev, amount: +e.target.value }))} required /></FormField>
               {form.type === "INVOICE" ? (
                 <FormField label="Customer">
-                  <Select value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })}>
+                  <Select value={form.customerId} onChange={(e) => setForm((prev) => ({ ...prev, customerId: e.target.value }))}>
                     <option value="">Select customer</option>
                     {customers.map((c) => <option key={String(c.id)} value={String(c.id)}>{String(c.name)}</option>)}
                   </Select>
                 </FormField>
               ) : (
                 <FormField label="Supplier">
-                  <Select value={form.supplierId} onChange={(e) => setForm({ ...form, supplierId: e.target.value })}>
+                  <Select value={form.supplierId} onChange={(e) => setForm((prev) => ({ ...prev, supplierId: e.target.value }))}>
                     <option value="">Select supplier</option>
                     {suppliers.map((s) => <option key={String(s.id)} value={String(s.id)}>{String(s.name)}</option>)}
                   </Select>
                 </FormField>
               )}
-              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></FormField>
+              <FormField label="Description"><Input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

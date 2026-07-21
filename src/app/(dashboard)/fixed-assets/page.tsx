@@ -47,15 +47,15 @@ export default function FixedAssetsPage() {
       } />
 
       {showForm && (
-        <FormModal title="Register Fixed Asset" open onOpenChange={setShowForm}>
+        <FormModal title="Register Fixed Asset" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
-              <FormField label="Asset Name"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></FormField>
-              <FormField label="Category"><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required placeholder="Vehicles, Equipment, Buildings" /></FormField>
-              <FormField label="Purchase Date"><Input type="date" value={form.purchaseDate} onChange={(e) => setForm({ ...form, purchaseDate: e.target.value })} required /></FormField>
-              <FormField label="Purchase Cost"><Input type="number" value={form.purchaseCost} onChange={(e) => setForm({ ...form, purchaseCost: +e.target.value })} required /></FormField>
-              <FormField label="Salvage Value"><Input type="number" value={form.salvageValue} onChange={(e) => setForm({ ...form, salvageValue: +e.target.value })} /></FormField>
-              <FormField label="Useful Life (months)"><Input type="number" value={form.usefulLifeMonths} onChange={(e) => setForm({ ...form, usefulLifeMonths: +e.target.value })} required /></FormField>
+              <FormField label="Asset Name"><Input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required /></FormField>
+              <FormField label="Category"><Input value={form.category} onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))} required placeholder="Vehicles, Equipment, Buildings" /></FormField>
+              <FormField label="Purchase Date"><Input type="date" value={form.purchaseDate} onChange={(e) => setForm((prev) => ({ ...prev, purchaseDate: e.target.value }))} required /></FormField>
+              <FormField label="Purchase Cost"><Input type="number" value={form.purchaseCost} onChange={(e) => setForm((prev) => ({ ...prev, purchaseCost: +e.target.value }))} required /></FormField>
+              <FormField label="Salvage Value"><Input type="number" value={form.salvageValue} onChange={(e) => setForm((prev) => ({ ...prev, salvageValue: +e.target.value }))} /></FormField>
+              <FormField label="Useful Life (months)"><Input type="number" value={form.usefulLifeMonths} onChange={(e) => setForm((prev) => ({ ...prev, usefulLifeMonths: +e.target.value }))} required /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

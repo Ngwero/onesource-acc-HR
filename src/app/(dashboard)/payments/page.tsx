@@ -100,14 +100,14 @@ export default function PaymentsPage() {
       />
 
       {showForm && (
-        <FormModal title="Record Payment" open onOpenChange={setShowForm}>
+        <FormModal title="Record Payment" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Payment Type">
                 <Select
                   value={form.type}
                   onChange={(e) => {
-                    setForm({ ...form, type: e.target.value, targetId: "" });
+                    setForm((prev) => ({ ...prev, type: e.target.value, targetId: "" }));
                     setAllocations([{ id: "1", targetId: "", amount: 0 }]);
                   }}
                 >
@@ -130,7 +130,7 @@ export default function PaymentsPage() {
                       value={form.targetId}
                       onChange={(e) => {
                         const t = targets.find((x) => x.id === e.target.value);
-                        setForm({ ...form, targetId: e.target.value, amount: t ? Number(t.balance) : 0 });
+                        setForm((prev) => ({ ...prev, targetId: e.target.value, amount: t ? Number(t.balance) : 0 }));
                       }}
                       required
                     >
@@ -143,7 +143,7 @@ export default function PaymentsPage() {
                     </Select>
                   </FormField>
                   <FormField label="Amount">
-                    <Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: +e.target.value })} required />
+                    <Input type="number" value={form.amount} onChange={(e) => setForm((prev) => ({ ...prev, amount: +e.target.value }))} required />
                   </FormField>
                 </>
               ) : (
@@ -188,7 +188,7 @@ export default function PaymentsPage() {
               )}
 
               <FormField label="Method">
-                <Select value={form.paymentMethod} onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}>
+                <Select value={form.paymentMethod} onChange={(e) => setForm((prev) => ({ ...prev, paymentMethod: e.target.value }))}>
                   <option value="BANK_TRANSFER">Bank Transfer</option>
                   <option value="CASH">Cash</option>
                   <option value="MOBILE_MONEY">Mobile Money</option>
@@ -198,7 +198,7 @@ export default function PaymentsPage() {
 
               {form.paymentMethod === "BANK_TRANSFER" && (
                 <FormField label="Bank Account">
-                  <Select value={form.bankAccountId} onChange={(e) => setForm({ ...form, bankAccountId: e.target.value })}>
+                  <Select value={form.bankAccountId} onChange={(e) => setForm((prev) => ({ ...prev, bankAccountId: e.target.value }))}>
                     <option value="">Select (optional)</option>
                     {bankAccounts.map((a) => (
                       <option key={String(a.id)} value={String(a.id)}>{String(a.name)}</option>
@@ -207,7 +207,7 @@ export default function PaymentsPage() {
                 </FormField>
               )}
 
-              <FormField label="Reference"><Input value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} /></FormField>
+              <FormField label="Reference"><Input value={form.reference} onChange={(e) => setForm((prev) => ({ ...prev, reference: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

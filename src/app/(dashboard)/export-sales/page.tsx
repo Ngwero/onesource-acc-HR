@@ -53,29 +53,29 @@ export default function ExportSalesPage() {
       } />
 
       {showForm && (
-        <FormModal title="New Export Sale" open onOpenChange={setShowForm}>
+        <FormModal title="New Export Sale" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Customer">
-                <Select value={form.customerId} onChange={(e) => setForm({ ...form, customerId: e.target.value })} required>
+                <Select value={form.customerId} onChange={(e) => setForm((prev) => ({ ...prev, customerId: e.target.value }))} required>
                   <option value="">Select customer</option>
                   {customers.map((c) => <option key={String(c.id)} value={String(c.id)}>{String(c.name)}</option>)}
                 </Select>
               </FormField>
               <FormField label="Produce">
-                <Select value={form.produceId} onChange={(e) => setForm({ ...form, produceId: e.target.value })} required>
+                <Select value={form.produceId} onChange={(e) => setForm((prev) => ({ ...prev, produceId: e.target.value }))} required>
                   <option value="">Select produce</option>
                   {produce.map((p) => <option key={String(p.id)} value={String(p.id)}>{String(p.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Quantity (kg)"><Input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: +e.target.value })} required /></FormField>
+              <FormField label="Quantity (kg)"><Input type="number" value={form.quantity} onChange={(e) => setForm((prev) => ({ ...prev, quantity: +e.target.value }))} required /></FormField>
               <FormField label="Currency">
-                <Select value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
+                <Select value={form.currency} onChange={(e) => setForm((prev) => ({ ...prev, currency: e.target.value }))}>
                   <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="KES">KES</option>
                 </Select>
               </FormField>
-              <FormField label="Exchange Rate"><Input type="number" value={form.exchangeRate} onChange={(e) => setForm({ ...form, exchangeRate: +e.target.value })} /></FormField>
-              <FormField label="Unit Export Price"><Input type="number" step="0.01" value={form.unitExportPrice} onChange={(e) => setForm({ ...form, unitExportPrice: +e.target.value })} required /></FormField>
+              <FormField label="Exchange Rate"><Input type="number" value={form.exchangeRate} onChange={(e) => setForm((prev) => ({ ...prev, exchangeRate: +e.target.value }))} /></FormField>
+              <FormField label="Unit Export Price"><Input type="number" step="0.01" value={form.unitExportPrice} onChange={(e) => setForm((prev) => ({ ...prev, unitExportPrice: +e.target.value }))} required /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

@@ -62,9 +62,11 @@ export default function PurchasesPage() {
   };
 
   const updateLine = (i: number, patch: Partial<LineItem>) => {
-    const lines = [...form.lines];
-    lines[i] = { ...lines[i], ...patch };
-    setForm({ ...form, lines });
+    setForm((prev) => {
+      const lines = [...prev.lines];
+      lines[i] = { ...lines[i], ...patch };
+      return { ...prev, lines };
+    });
   };
 
   return (
@@ -78,16 +80,16 @@ export default function PurchasesPage() {
       </div>
 
       {showForm && (
-        <FormModal title="New Purchase" open onOpenChange={setShowForm}>
+        <FormModal title="New Purchase" open={showForm} onOpenChange={setShowForm}>
           {({ close }) => (
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(close); }} className="space-y-3">
               <FormField label="Supplier">
-                <Select value={form.supplierId} onChange={(e) => setForm({ ...form, supplierId: e.target.value })} required>
+                <Select value={form.supplierId} onChange={(e) => setForm((prev) => ({ ...prev, supplierId: e.target.value }))} required>
                   <option value="">Select supplier</option>
                   {suppliers.map((s) => <option key={String(s.id)} value={String(s.id)}>{String(s.name)}</option>)}
                 </Select>
               </FormField>
-              <FormField label="Purchase Date"><Input type="date" value={form.purchaseDate} onChange={(e) => setForm({ ...form, purchaseDate: e.target.value })} /></FormField>
+              <FormField label="Purchase Date"><Input type="date" value={form.purchaseDate} onChange={(e) => setForm((prev) => ({ ...prev, purchaseDate: e.target.value }))} /></FormField>
               {form.lines.map((line, i) => (
                 <div key={i} className="grid gap-2 rounded border border-green-100 p-3 sm:grid-cols-4">
                   <Select value={line.produceId} onChange={(e) => updateLine(i, { produceId: e.target.value })} required>
@@ -101,12 +103,12 @@ export default function PurchasesPage() {
                   </Select>
                 </div>
               ))}
-              <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, lines: [...form.lines, { produceId: "", quantity: 0, unitPrice: 0, grade: "A" }] })}>+ Add line</Button>
+              <Button type="button" variant="outline" size="sm" onClick={() => setForm((prev) => ({ ...prev, lines: [...form.lines, { produceId: "", quantity: 0, unitPrice: 0, grade: "A" }] }))}>+ Add line</Button>
               <div className="grid gap-3 sm:grid-cols-2">
-                <FormField label="Transport Cost"><Input type="number" value={form.transportCost} onChange={(e) => setForm({ ...form, transportCost: +e.target.value })} /></FormField>
-                <FormField label="Loading Cost"><Input type="number" value={form.loadingCost} onChange={(e) => setForm({ ...form, loadingCost: +e.target.value })} /></FormField>
+                <FormField label="Transport Cost"><Input type="number" value={form.transportCost} onChange={(e) => setForm((prev) => ({ ...prev, transportCost: +e.target.value }))} /></FormField>
+                <FormField label="Loading Cost"><Input type="number" value={form.loadingCost} onChange={(e) => setForm((prev) => ({ ...prev, loadingCost: +e.target.value }))} /></FormField>
               </div>
-              <FormField label="Notes"><Input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormField>
+              <FormField label="Notes"><Input value={form.notes} onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))} /></FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}

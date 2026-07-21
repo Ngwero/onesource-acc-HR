@@ -20,21 +20,35 @@ export function FormModal({
   onOpenChange,
 }: FormModalProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const open = controlledOpen ?? internalOpen;
-  const setOpen = onOpenChange ?? setInternalOpen;
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const setOpen = (next: boolean) => {
+    if (!isControlled) setInternalOpen(next);
+    onOpenChange?.(next);
+  };
 
   if (!open) {
-    // Controlled closed: don't render a stray trigger (pages use their own buttons)
-    if (controlledOpen !== undefined) return null;
+    if (isControlled) return null;
     return <Button onClick={() => setOpen(true)}>{triggerLabel}</Button>;
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <Card className="max-h-[90vh] w-full max-w-lg overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setOpen(false);
+      }}
+    >
+      <Card
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">{title}</CardTitle>
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>✕</Button>
+          <Button variant="ghost" size="sm" type="button" onClick={() => setOpen(false)}>
+            ✕
+          </Button>
         </CardHeader>
         <CardContent>
           {typeof children === "function" ? children({ close: () => setOpen(false) }) : children}
@@ -44,7 +58,15 @@ export function FormModal({
   );
 }
 
-export function FormField({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+export function FormField({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <div className={className}>
       <label className="mb-1 block text-sm font-medium text-green-900">{label}</label>
@@ -66,40 +88,21 @@ export function FormActions({
 }) {
   return (
     <div className="mt-4 flex gap-2">
-      <Button
-        type={onSubmit ? "button" : "submit"}
-        disabled={loading}
-        onClick={onSubmit}
-      >
+      <Button type={onSubmit ? "button" : "submit"} disabled={loading} onClick={onSubmit}>
         {loading ? "Saving..." : submitLabel}
       </Button>
-      <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+      <Button type="button" variant="outline" onClick={onCancel}>
+        Cancel
+      </Button>
     </div>
   );
 }
 
-export async function apiPost(url: string, body: unknown) {
+export async function apiPost(url: string, data: unknown) {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify(data),
   });
   return res.json();
-}
-
-export function useLookup(endpoint: string) {
-  const [data, setData] = useState<Record<string, unknown>[]>([]);
-  const [loaded, setLoaded] = useState(false);
-
-  const load = () => {
-    if (loaded) return;
-    fetch(endpoint)
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.success) setData(res.data.items || res.data || []);
-        setLoaded(true);
-      });
-  };
-
-  return { data, load, setData, reload: () => setLoaded(false) };
 }

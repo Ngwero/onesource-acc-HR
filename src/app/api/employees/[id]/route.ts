@@ -15,8 +15,11 @@ export const GET = withAuth(
     try {
       const employee = await getEmployee(params!.id);
       return successResponse(employee);
-    } catch {
-      return notFoundResponse("Employee not found");
+    } catch (err) {
+      console.error("[GET /api/employees/:id]", err);
+      return notFoundResponse(
+        err instanceof Error ? err.message : "Employee not found"
+      );
     }
   },
   { module: "employees", action: "read" }

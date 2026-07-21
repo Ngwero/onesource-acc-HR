@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormModal, FormField, FormActions } from "@/components/ui/form-modal";
@@ -38,43 +38,69 @@ export default function EmployeeDetailPage() {
   const params = useParams();
   const id = String(params.id);
   const [emp, setEmp] = useState<Employee | null>(null);
+  const [loadError, setLoadError] = useState("");
   const [showEdit, setShowEdit] = useState(false);
   const [showDoc, setShowDoc] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [form, setForm] = useState<Record<string, string | number>>({});
   const [docForm, setDocForm] = useState({ title: "", category: "CONTRACT", notes: "" });
   const [notice, setNotice] = useState("");
 
-  const load = () => {
+  const load = useCallback(() => {
+    if (!id || id === "undefined") {
+      setLoadError("Invalid employee");
+      setFetching(false);
+      return;
+    }
+    setFetching(true);
+    setLoadError("");
     fetch(`/api/employees/${id}`)
-      .then((r) => r.json())
+      .then(async (r) => {
+        const text = await r.text();
+        if (!text) throw new Error(r.ok ? "Empty response" : `HTTP ${r.status}`);
+        return JSON.parse(text) as { success?: boolean; message?: string; data?: Employee };
+      })
       .then((res) => {
-        if (res.success) {
+        if (res.success && res.data) {
           setEmp(res.data);
           setForm({
             fullName: res.data.fullName || "",
-            email: res.data.email || "",
-            phone: res.data.phone || "",
-            jobTitle: res.data.jobTitle || "",
+            email: String(res.data.email || ""),
+            phone: String(res.data.phone || ""),
+            jobTitle: String(res.data.jobTitle || ""),
             baseSalary: Number(res.data.baseSalary || 0),
             allowances: Number(res.data.allowances || 0),
-            nationalId: res.data.nationalId || "",
-            tin: res.data.tin || "",
-            nssfNumber: res.data.nssfNumber || "",
-            bankName: res.data.bankName || "",
-            bankAccount: res.data.bankAccount || "",
-            address: res.data.address || "",
-            emergencyContact: res.data.emergencyContact || "",
-            emergencyPhone: res.data.emergencyPhone || "",
+            nationalId: String(res.data.nationalId || ""),
+            tin: String(res.data.tin || ""),
+            nssfNumber: String(res.data.nssfNumber || ""),
+            bankName: String(res.data.bankName || ""),
+            bankAccount: String(res.data.bankAccount || ""),
+            address: String(res.data.address || ""),
+            emergencyContact: String(res.data.emergencyContact || ""),
+            emergencyPhone: String(res.data.emergencyPhone || ""),
             status: res.data.status || "ACTIVE",
           });
+        } else {
+          setEmp(null);
+          setLoadError(res.message || "Employee not found");
         }
-      });
-  };
+      })
+      .catch((err) => {
+        console.error(err);
+        setEmp(null);
+        setLoadError(err instanceof Error ? err.message : "Failed to load employee");
+      })
+      .finally(() => setFetching(false));
+  }, [id]);
 
   useEffect(() => {
     load();
-  }, [id]);
+  }, [load]);
+
+  const updateField = (key: string, value: string | number) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
 
   const save = async (close: () => void) => {
     setLoading(true);
@@ -121,8 +147,22 @@ export default function EmployeeDetailPage() {
     } else setNotice(res.message || "Failed");
   };
 
-  if (!emp) {
+  if (fetching && !emp) {
     return <PageLoader label="Loading employee…" />;
+  }
+
+  if (!emp) {
+    return (
+      <div className="dash-page space-y-4">
+        <Link href="/employees" className="text-sm font-medium text-[#105820] hover:underline">
+          ← Employees
+        </Link>
+        <p className="text-sm text-red-600">{loadError || "Employee not found"}</p>
+        <button type="button" className="dash-btn-secondary" onClick={load}>
+          Retry
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -406,8 +446,7 @@ export default function EmployeeDetailPage() {
         </section>
       )}
 
-      {showEdit && (
-        <FormModal title="Edit employee" open onOpenChange={setShowEdit}>
+      <FormModal title="Edit employee" open={showEdit} onOpenChange={setShowEdit}>
           {({ close }) => (
             <form
               className="max-h-[70vh] space-y-3 overflow-y-auto"
@@ -435,7 +474,7 @@ export default function EmployeeDetailPage() {
                 <FormField key={key} label={label}>
                   <Input
                     value={String(form[key] ?? "")}
-                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                    onChange={(e) => updateField(key, e.target.value)}
                   />
                 </FormField>
               ))}
@@ -443,22 +482,32 @@ export default function EmployeeDetailPage() {
                 <FormField label="Base salary">
                   <Input
                     type="number"
-                    value={Number(form.baseSalary || 0)}
-                    onChange={(e) => setForm({ ...form, baseSalary: Number(e.target.value) || 0 })}
+                    value={String(form.baseSalary ?? 0)}
+                    onChange={(e) =>
+                      updateField(
+                        "baseSalary",
+                        e.target.value === "" ? 0 : Number(e.target.value)
+                      )
+                    }
                   />
                 </FormField>
                 <FormField label="Allowances">
                   <Input
                     type="number"
-                    value={Number(form.allowances || 0)}
-                    onChange={(e) => setForm({ ...form, allowances: Number(e.target.value) || 0 })}
+                    value={String(form.allowances ?? 0)}
+                    onChange={(e) =>
+                      updateField(
+                        "allowances",
+                        e.target.value === "" ? 0 : Number(e.target.value)
+                      )
+                    }
                   />
                 </FormField>
               </div>
               <FormField label="Status">
                 <Select
-                  value={String(form.status)}
-                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  value={String(form.status ?? "ACTIVE")}
+                  onChange={(e) => updateField("status", e.target.value)}
                 >
                   <option value="ACTIVE">Active</option>
                   <option value="PROBATION">Probation</option>
@@ -470,10 +519,8 @@ export default function EmployeeDetailPage() {
             </form>
           )}
         </FormModal>
-      )}
 
-      {showDoc && (
-        <FormModal title="Add document" open onOpenChange={setShowDoc}>
+      <FormModal title="Add document" open={showDoc} onOpenChange={setShowDoc}>
           {({ close }) => (
             <form
               className="space-y-3"
@@ -486,13 +533,17 @@ export default function EmployeeDetailPage() {
                 <Input
                   required
                   value={docForm.title}
-                  onChange={(e) => setDocForm({ ...docForm, title: e.target.value })}
+                  onChange={(e) =>
+                    setDocForm((prev) => ({ ...prev, title: e.target.value }))
+                  }
                 />
               </FormField>
               <FormField label="Category">
                 <Select
                   value={docForm.category}
-                  onChange={(e) => setDocForm({ ...docForm, category: e.target.value })}
+                  onChange={(e) =>
+                    setDocForm((prev) => ({ ...prev, category: e.target.value }))
+                  }
                 >
                   <option value="CONTRACT">Contract</option>
                   <option value="ID">ID</option>
@@ -503,14 +554,15 @@ export default function EmployeeDetailPage() {
               <FormField label="Notes">
                 <Input
                   value={docForm.notes}
-                  onChange={(e) => setDocForm({ ...docForm, notes: e.target.value })}
+                  onChange={(e) =>
+                    setDocForm((prev) => ({ ...prev, notes: e.target.value }))
+                  }
                 />
               </FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
         </FormModal>
-      )}
     </div>
   );
 }

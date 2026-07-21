@@ -170,39 +170,83 @@ export async function listEmployees(options?: {
 
 export async function getEmployee(id: string) {
   await syncEmployeeLeaveStatus();
-  const employee = await prisma.employee.findFirst({
-    where: { id, deletedAt: null },
-    include: {
-      department: true,
-      reportsTo: { select: { id: true, fullName: true, jobTitle: true } },
-      directReports: { select: { id: true, fullName: true, jobTitle: true, status: true } },
-      user: { select: { id: true, email: true, role: true, fullName: true } },
-      leaveBalances: { where: { year: new Date().getFullYear() }, orderBy: { leaveType: "asc" } },
-      leaveRequests: { orderBy: { createdAt: "desc" }, take: 20 },
-      attendanceRecords: { orderBy: { date: "desc" }, take: 30 },
-      documents: { orderBy: { createdAt: "desc" } },
-      contracts: { orderBy: { startDate: "desc" }, take: 10 },
-      reviewsReceived: {
-        include: { reviewer: { select: { id: true, fullName: true } } },
-        orderBy: { periodEnd: "desc" },
-        take: 10,
+
+  const baseWhere = { id, deletedAt: null } as const;
+
+  try {
+    const employee = await prisma.employee.findFirst({
+      where: baseWhere,
+      include: {
+        department: true,
+        reportsTo: { select: { id: true, fullName: true, jobTitle: true } },
+        directReports: {
+          select: { id: true, fullName: true, jobTitle: true, status: true },
+        },
+        user: { select: { id: true, email: true, role: true, fullName: true } },
+        leaveBalances: {
+          where: { year: new Date().getFullYear() },
+          orderBy: { leaveType: "asc" },
+        },
+        leaveRequests: { orderBy: { createdAt: "desc" }, take: 20 },
+        attendanceRecords: { orderBy: { date: "desc" }, take: 30 },
+        documents: { orderBy: { createdAt: "desc" } },
+        contracts: { orderBy: { startDate: "desc" }, take: 10 },
+        reviewsReceived: {
+          include: { reviewer: { select: { id: true, fullName: true } } },
+          orderBy: { periodEnd: "desc" },
+          take: 10,
+        },
+        trainings: {
+          include: { program: true },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        },
+        disciplinaryActions: { orderBy: { actionDate: "desc" }, take: 10 },
+        checklistItems: { orderBy: [{ kind: "asc" }, { sortOrder: "asc" }] },
+        payRunItems: {
+          include: { payRun: true },
+          orderBy: { payRun: { periodEnd: "desc" } },
+          take: 12,
+        },
       },
-      trainings: {
-        include: { program: true },
-        orderBy: { createdAt: "desc" },
-        take: 10,
+    });
+    if (!employee) throw new Error("Employee not found");
+    return serializeEmployee(employee);
+  } catch (err) {
+    // Fall back if extended HR relations are unavailable (stale client / partial migrate)
+    console.error("[getEmployee] full include failed, using basic profile", err);
+    const employee = await prisma.employee.findFirst({
+      where: baseWhere,
+      include: {
+        department: true,
+        leaveBalances: {
+          where: { year: new Date().getFullYear() },
+          orderBy: { leaveType: "asc" },
+        },
+        leaveRequests: { orderBy: { createdAt: "desc" }, take: 20 },
+        attendanceRecords: { orderBy: { date: "desc" }, take: 30 },
+        documents: { orderBy: { createdAt: "desc" } },
+        payRunItems: {
+          include: { payRun: true },
+          orderBy: { payRun: { periodEnd: "desc" } },
+          take: 12,
+        },
       },
-      disciplinaryActions: { orderBy: { actionDate: "desc" }, take: 10 },
-      checklistItems: { orderBy: [{ kind: "asc" }, { sortOrder: "asc" }] },
-      payRunItems: {
-        include: { payRun: true },
-        orderBy: { payRun: { periodEnd: "desc" } },
-        take: 12,
-      },
-    },
-  });
-  if (!employee) throw new Error("Employee not found");
-  return employee;
+    });
+    if (!employee) throw new Error("Employee not found");
+    return serializeEmployee(employee);
+  }
+}
+
+function serializeEmployee<T>(employee: T): T {
+  return JSON.parse(
+    JSON.stringify(employee, (_key, value) => {
+      if (value != null && typeof value === "object" && typeof value.toNumber === "function") {
+        return value.toNumber();
+      }
+      return value;
+    })
+  ) as T;
 }
 
 type EmployeeInput = {

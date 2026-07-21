@@ -237,8 +237,7 @@ export default function EmployeesPage() {
         </div>
       </section>
 
-      {showCreate && (
-        <FormModal title="Add employee" open onOpenChange={setShowCreate}>
+      <FormModal title="Add employee" open={showCreate} onOpenChange={setShowCreate}>
           {({ close }) => (
             <form
               className="max-h-[70vh] space-y-3 overflow-y-auto pr-1"
@@ -251,7 +250,7 @@ export default function EmployeesPage() {
                 <Input
                   required
                   value={form.fullName}
-                  onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+                  onChange={(e) => setForm((prev) => ({ ...prev, fullName: e.target.value }))}
                 />
               </FormField>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -259,13 +258,13 @@ export default function EmployeesPage() {
                   <Input
                     type="email"
                     value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
                   />
                 </FormField>
                 <FormField label="Phone">
                   <Input
                     value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
                   />
                 </FormField>
               </div>
@@ -273,13 +272,13 @@ export default function EmployeesPage() {
                 <FormField label="Job title">
                   <Input
                     value={form.jobTitle}
-                    onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, jobTitle: e.target.value }))}
                   />
                 </FormField>
                 <FormField label="Department">
                   <Select
                     value={form.departmentId}
-                    onChange={(e) => setForm({ ...form, departmentId: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, departmentId: e.target.value }))}
                   >
                     <option value="">Unassigned</option>
                     {departments.map((d) => (
@@ -295,7 +294,7 @@ export default function EmployeesPage() {
                   <Input
                     type="date"
                     value={form.hireDate}
-                    onChange={(e) => setForm({ ...form, hireDate: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, hireDate: e.target.value }))}
                   />
                 </FormField>
                 <FormField label="Base salary (UGX)">
@@ -304,7 +303,10 @@ export default function EmployeesPage() {
                     min={0}
                     value={form.baseSalary}
                     onChange={(e) =>
-                      setForm({ ...form, baseSalary: Number(e.target.value) || 0 })
+                      setForm((prev) => ({
+                        ...prev,
+                        baseSalary: e.target.value === "" ? 0 : Number(e.target.value),
+                      }))
                     }
                   />
                 </FormField>
@@ -315,7 +317,10 @@ export default function EmployeesPage() {
                   min={0}
                   value={form.allowances}
                   onChange={(e) =>
-                    setForm({ ...form, allowances: Number(e.target.value) || 0 })
+                    setForm((prev) => ({
+                      ...prev,
+                      allowances: e.target.value === "" ? 0 : Number(e.target.value),
+                    }))
                   }
                 />
               </FormField>
@@ -323,13 +328,13 @@ export default function EmployeesPage() {
                 <FormField label="National ID">
                   <Input
                     value={form.nationalId}
-                    onChange={(e) => setForm({ ...form, nationalId: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, nationalId: e.target.value }))}
                   />
                 </FormField>
                 <FormField label="NSSF number">
                   <Input
                     value={form.nssfNumber}
-                    onChange={(e) => setForm({ ...form, nssfNumber: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, nssfNumber: e.target.value }))}
                   />
                 </FormField>
               </div>
@@ -337,13 +342,13 @@ export default function EmployeesPage() {
                 <FormField label="Bank name">
                   <Input
                     value={form.bankName}
-                    onChange={(e) => setForm({ ...form, bankName: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, bankName: e.target.value }))}
                   />
                 </FormField>
                 <FormField label="Bank account">
                   <Input
                     value={form.bankAccount}
-                    onChange={(e) => setForm({ ...form, bankAccount: e.target.value })}
+                    onChange={(e) => setForm((prev) => ({ ...prev, bankAccount: e.target.value }))}
                   />
                 </FormField>
               </div>
@@ -351,10 +356,8 @@ export default function EmployeesPage() {
             </form>
           )}
         </FormModal>
-      )}
 
-      {showDept && (
-        <FormModal title="Add department" open onOpenChange={setShowDept}>
+      <FormModal title="Add department" open={showDept} onOpenChange={setShowDept}>
           {({ close }) => (
             <form
               className="space-y-3"
@@ -367,27 +370,26 @@ export default function EmployeesPage() {
                 <Input
                   required
                   value={deptForm.code}
-                  onChange={(e) => setDeptForm({ ...deptForm, code: e.target.value })}
+                  onChange={(e) => setDeptForm((prev) => ({ ...prev, code: e.target.value }))}
                 />
               </FormField>
               <FormField label="Name">
                 <Input
                   required
                   value={deptForm.name}
-                  onChange={(e) => setDeptForm({ ...deptForm, name: e.target.value })}
+                  onChange={(e) => setDeptForm((prev) => ({ ...prev, name: e.target.value }))}
                 />
               </FormField>
               <FormField label="Description">
                 <Input
                   value={deptForm.description}
-                  onChange={(e) => setDeptForm({ ...deptForm, description: e.target.value })}
+                  onChange={(e) => setDeptForm((prev) => ({ ...prev, description: e.target.value }))}
                 />
               </FormField>
               <FormActions onCancel={close} loading={loading} />
             </form>
           )}
         </FormModal>
-      )}
     </div>
   );
 }
